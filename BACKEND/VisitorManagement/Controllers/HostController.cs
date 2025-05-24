@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using myHosts = VisitorManagement.Models.Host;
+using myHosts = VisitorManagement.Models.Hosts;
 using VisitorManagement.Models;
 
 namespace VisitorManagement.Controllers

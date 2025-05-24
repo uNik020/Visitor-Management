@@ -9,5 +9,5 @@ public partial class Department
 
     public string DepartmentName { get; set; } = null!;
 
-    public virtual ICollection<Host> Hosts { get; set; } = new List<Host>();
+    public virtual ICollection<Hosts> Hosts { get; set; } = new List<Hosts>();
 }

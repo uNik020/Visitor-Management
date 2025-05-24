@@ -19,11 +19,13 @@ public partial class VisitorManagementContext : DbContext
 
     public virtual DbSet<Department> Departments { get; set; }
 
-    public virtual DbSet<Host> Hosts { get; set; }
+    public virtual DbSet<Hosts> Hosts { get; set; }
 
     public virtual DbSet<Visit> Visits { get; set; }
 
     public virtual DbSet<Visitor> Visitors { get; set; }
+
+    public virtual DbSet<PasswordResetRequest> PasswordResetRequests { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -33,15 +35,11 @@ public partial class VisitorManagementContext : DbContext
             entity.HasKey(e => e.AdminId).HasName("PK__Admins__719FE4E892EA49A9");
 
             entity.HasIndex(e => e.Username, "UQ__Admins__536C85E457A42CF5").IsUnique();
-
-            entity.Property(e => e.AdminId).HasColumnName("AdminID");
+            entity.Property(e => e.AdminId).HasColumnName("AdminId");
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
             entity.Property(e => e.PasswordHash).HasMaxLength(255);
-            entity.Property(e => e.Role)
-                .HasMaxLength(50)
-                .HasDefaultValue("Admin");
             entity.Property(e => e.Username).HasMaxLength(50);
         });
 
@@ -53,7 +51,7 @@ public partial class VisitorManagementContext : DbContext
             entity.Property(e => e.DepartmentName).HasMaxLength(100);
         });
 
-        modelBuilder.Entity<Host>(entity =>
+        modelBuilder.Entity<Hosts>(entity =>
         {
             entity.HasKey(e => e.HostId).HasName("PK__Hosts__08D4870CF19A5379");
 

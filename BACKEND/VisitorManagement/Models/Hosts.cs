@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace VisitorManagement.Models;
 
-public partial class Host
+public partial class Hosts
 {
     public int HostId { get; set; }
 

@@ -17,7 +17,7 @@ public partial class Visit
 
     public string? VisitStatus { get; set; }
 
-    public virtual Host Host { get; set; } = null!;
+    public virtual Hosts Host { get; set; } = null!;
 
     public virtual Visitor Visitor { get; set; } = null!;
 }
