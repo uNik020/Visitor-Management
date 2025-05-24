@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VisitorManagement.Models;
 
+//admin controller
+
 namespace VisitorManagement.Controllers
 {
     [Route("api/[controller]")]
