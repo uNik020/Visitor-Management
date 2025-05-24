@@ -3,7 +3,7 @@ using MimeKit;
 using VisitorManagement.Interfaces;
 using VisitorManagement.Models;
 
-namespace TickSyncAPI.Services
+namespace VisitorManagement.Services
 {
     public class EmailService : IEmailService
     {

@@ -1,4 +1,5 @@
-﻿using VisitorManagement.Models;
+﻿using VisitorManagement.DTO;
+using VisitorManagement.Models;
 
 namespace VisitorManagement.Services
 {
@@ -8,5 +9,7 @@ namespace VisitorManagement.Services
         public Task<Hosts> GetHost(int id);
         public Task<string> PutHost(int id, Hosts host);
         public Task<string> DeleteHost(int id);
+        Task<Hosts> PostHost(HostCreateDto hostDto);
+
     }
 }

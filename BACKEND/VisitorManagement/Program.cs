@@ -1,12 +1,22 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using VisitorManagement.Models;
+using VisitorManagement.Controllers;
+using VisitorManagement.DTO;
+using VisitorManagement.Interfaces;
+using VisitorManagement.Services;
+using VisitorManagement.HelperClasses;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddTransient<IHostService, HostService>();
+builder.Services.AddTransient<IVisitorService, VisitorService>();
+builder.Services.AddTransient<IVisitService, VisitService>();
+builder.Services.AddTransient<IAuthService, AuthService>();
+builder.Services.AddTransient<IEmailService, EmailService>();
 
 builder.Services.AddDbContext<VisitorManagementContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));

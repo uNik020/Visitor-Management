@@ -79,6 +79,21 @@ namespace VisitorManagement.Services
             return _context.Hosts.Any(e => e.HostId == id);
         }
 
-       
+        public async Task<Hosts> PostHost(HostCreateDto hostDto)
+        {
+            var host = new Hosts
+            {
+                FullName = hostDto.FullName,
+                Email = hostDto.Email,
+                PhoneNumber = hostDto.PhoneNumber,
+                DepartmentId = hostDto.DepartmentId
+            };
+
+            _context.Hosts.Add(host);
+            await _context.SaveChangesAsync();
+
+            return host;
+        }
+
     }
 }

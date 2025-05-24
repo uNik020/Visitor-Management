@@ -13,7 +13,7 @@ public partial class Visitor
 
     public string? Email { get; set; }
 
-    public string? PhotoPath { get; set; }
+    //public string? PhotoPath { get; set; }
 
     public string? Purpose { get; set; }
 

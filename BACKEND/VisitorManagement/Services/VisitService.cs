@@ -20,12 +20,14 @@ namespace VisitorManagement.Services
             return await _context.Visits
                 .Include(v => v.Visitor)
                 .Include(v => v.Host)
+                .ThenInclude(v => v.Department)
                 .Select(v => new VisitDto
                 {
                     VisitId = v.VisitId,
                     VisitorName = v.Visitor.FullName,
                     HostName = v.Host.FullName,
-                    Department = v.Host.Department.DepartmentName ?? "N/A",
+                    VisitStatus = v.VisitStatus,
+                    Department = v.Host.Department.DepartmentName,
                     CheckInTime = v.CheckInTime ?? DateTime.MinValue,
                     CheckOutTime = v.CheckOutTime ?? DateTime.MinValue
                 }).ToListAsync();
@@ -36,6 +38,7 @@ namespace VisitorManagement.Services
             var visit = await _context.Visits
                 .Include(v => v.Visitor)
                 .Include(v => v.Host)
+                .ThenInclude(v => v.Department)
                 .FirstOrDefaultAsync(v => v.VisitId == id);
 
             if (visit == null) return null;
@@ -45,20 +48,39 @@ namespace VisitorManagement.Services
                 VisitId = visit.VisitId,
                 VisitorName = visit.Visitor.FullName,
                 HostName = visit.Host.FullName,
-                Department = visit.Host.Department?.DepartmentName ?? "N/A",
+                VisitStatus = visit.VisitStatus,
+                Department = visit.Host.Department.DepartmentName,
                 CheckInTime = visit.CheckInTime ?? DateTime.MinValue,
                 CheckOutTime = visit.CheckOutTime ?? DateTime.MinValue
             };
         }
 
-        public async Task<bool> CreateVisitAsync(Visit visit)
+        public async Task<bool> CreateVisitAsync(VisitCreateDto visitDto)
         {
+            var visit = new Visit
+            {
+                VisitorId = visitDto.VisitorId,
+                HostId = visitDto.HostId,
+                CheckInTime = visitDto.CheckInTime ?? DateTime.UtcNow,
+                CheckOutTime = visitDto.CheckOutTime,
+                VisitStatus = visitDto.VisitStatus
+            };
+
             _context.Visits.Add(visit);
             return await _context.SaveChangesAsync() > 0;
         }
 
-        public async Task<bool> UpdateVisitAsync(Visit visit)
+
+        public async Task<bool> UpdateVisitAsync(VisitCreateDto visitDto)
         {
+            var visit = await _context.Visits.SingleOrDefaultAsync(v => v.VisitId == visitDto.VisitId);
+
+            visit.VisitId = visitDto.VisitId;
+            visit.VisitorId = visitDto.VisitorId;
+            visit.HostId = visitDto.HostId;
+            visit.VisitStatus = visitDto.VisitStatus;
+                
+           
             _context.Visits.Update(visit);
             return await _context.SaveChangesAsync() > 0;
         }

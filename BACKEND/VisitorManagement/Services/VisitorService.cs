@@ -79,6 +79,25 @@ namespace VisitorManagement.Services
             return _context.Visitors.Any(e => e.VisitorId == id);
         }
 
-       
+        public async Task<Visitor> PostVisitor(VisitorCreateDto visitorDto)
+        {
+            var visitor = new Visitor
+            {
+                FullName = visitorDto.FullName,
+                PhoneNumber = visitorDto.PhoneNumber,
+                Email = visitorDto.Email,
+                //PhotoPath = visitorDto.PhotoPath,
+                Purpose = visitorDto.Purpose,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            _context.Visitors.Add(visitor);
+            await _context.SaveChangesAsync();
+
+            return visitor;
+        }
+
+
+
     }
 }

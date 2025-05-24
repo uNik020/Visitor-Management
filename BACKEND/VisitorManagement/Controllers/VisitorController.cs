@@ -1,10 +1,14 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using VisitorManagement.DTO;
+using VisitorManagement.HelperClasses;
+using VisitorManagement.Interfaces;
 using VisitorManagement.Models;
 
 namespace VisitorManagement.Controllers
@@ -13,32 +17,45 @@ namespace VisitorManagement.Controllers
     [ApiController]
     public class VisitorController : ControllerBase
     {
-        private readonly VisitorManagementContext _context;
+        private readonly IVisitorService _visitorService;
 
-        public VisitorController(VisitorManagementContext context)
+        public VisitorController(IVisitorService visitorService)
         {
-            _context = context;
+            _visitorService = visitorService;
         }
+
 
         // GET: api/Visitor
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Visitor>>> GetVisitors()
         {
-            return await _context.Visitors.ToListAsync();
+            try
+            {
+                var visitors = await _visitorService.GetVisitors();
+                return Ok(visitors);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An unexpected error occurred: " + ex.Message);
+            }
         }
 
         // GET: api/Visitor/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Visitor>> GetVisitor(int id)
         {
-            var visitor = await _context.Visitors.FindAsync(id);
-
-            if (visitor == null)
+            try
             {
-                return NotFound();
+                return await _visitorService.GetVisitor(id);
             }
-
-            return visitor;
+            catch (CustomException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An unexpected error occurred: " + ex.Message);
+            }
         }
 
         // PUT: api/Visitor/5
@@ -46,62 +63,55 @@ namespace VisitorManagement.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutVisitor(int id, Visitor visitor)
         {
-            if (id != visitor.VisitorId)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(visitor).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                var res = await _visitorService.PutVisitor(id, visitor);
+                return Ok(res);
             }
-            catch (DbUpdateConcurrencyException)
+            catch (CustomException ex)
             {
-                if (!VisitorExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return StatusCode(ex.StatusCode, ex.Message);
             }
-
-            return NoContent();
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An unexpected error occurred: " + ex.Message);
+            }
         }
 
         // POST: api/Visitor
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Visitor>> PostVisitor(Visitor visitor)
+        public async Task<ActionResult<Visitor>> PostVisitor(VisitorCreateDto visitorDto)
         {
-            _context.Visitors.Add(visitor);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetVisitor", new { id = visitor.VisitorId }, visitor);
+            try
+            {
+                var createdVisitor = await _visitorService.PostVisitor(visitorDto);
+                return CreatedAtAction(nameof(_visitorService.GetVisitor), new { id = createdVisitor.VisitorId }, createdVisitor);
+            }
+            catch (CustomException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
         }
+
 
         // DELETE: api/Visitor/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteVisitor(int id)
         {
-            var visitor = await _context.Visitors.FindAsync(id);
-            if (visitor == null)
+            try
             {
-                return NotFound();
+                var res = await _visitorService.DeleteVisitor(id);
+                return Ok(res);
             }
-
-            _context.Visitors.Remove(visitor);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool VisitorExists(int id)
-        {
-            return _context.Visitors.Any(e => e.VisitorId == id);
+            catch (CustomException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An unexpected error occurred: " + ex.Message);
+            }
         }
     }
 }

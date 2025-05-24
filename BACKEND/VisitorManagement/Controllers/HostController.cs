@@ -1,12 +1,15 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using myHosts = VisitorManagement.Models.Hosts;
+using VisitorManagement.DTO;
+using VisitorManagement.HelperClasses;
 using VisitorManagement.Models;
+using VisitorManagement.Services;
+using myHosts = VisitorManagement.Models.Hosts;
 
 namespace VisitorManagement.Controllers
 {
@@ -14,32 +17,44 @@ namespace VisitorManagement.Controllers
     [ApiController]
     public class HostController : ControllerBase
     {
-        private readonly VisitorManagementContext _context;
+        private readonly IHostService _hostService;
 
-        public HostController(VisitorManagementContext context)
+        public HostController(IHostService hostService)
         {
-            _context = context;
+            _hostService = hostService;
         }
 
         // GET: api/Host
         [HttpGet]
         public async Task<ActionResult<IEnumerable<myHosts>>> GetHosts()
         {
-            return await _context.Hosts.ToListAsync();
+            try
+            {
+                var users = await _hostService.GetHosts();
+                return Ok(users);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An unexpected error occurred: " + ex.Message);
+            }
         }
 
         // GET: api/Host/5
         [HttpGet("{id}")]
         public async Task<ActionResult<myHosts>> GetHost(int id)
         {
-            var host = await _context.Hosts.FindAsync(id);
-
-            if (host == null)
+            try
             {
-                return NotFound();
+                return await _hostService.GetHost(id);
             }
-
-            return host;
+            catch (CustomException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An unexpected error occurred: " + ex.Message);
+            }
         }
 
         // PUT: api/Host/5
@@ -47,62 +62,62 @@ namespace VisitorManagement.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutHost(int id, myHosts host)
         {
-            if (id != host.HostId)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(host).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                var res = await _hostService.PutHost(id, host);
+                return Ok(res);
             }
-            catch (DbUpdateConcurrencyException)
+            catch (CustomException ex)
             {
-                if (!HostExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return StatusCode(ex.StatusCode, ex.Message);
             }
-
-            return NoContent();
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An unexpected error occurred: " + ex.Message);
+            }
         }
 
         // POST: api/Host
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<myHosts>> PostHost(myHosts host)
+        public async Task<ActionResult<myHosts>> PostHost(HostCreateDto hostDto)
         {
-            _context.Hosts.Add(host);
-            await _context.SaveChangesAsync();
+            try
+            {
+                var createdUser = await _hostService.PostHost(hostDto);
+                return Ok(createdUser);
+            }
+            catch (DbUpdateException ex)
+            {
+                var message = ex.InnerException?.Message;
 
-            return CreatedAtAction("GetHost", new { id = host.HostId }, host);
+                if (message?.Contains("UQ_Users_Email") == true)
+                    return BadRequest("Email already exists.");
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
         // DELETE: api/Host/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteHost(int id)
         {
-            var host = await _context.Hosts.FindAsync(id);
-            if (host == null)
+            try
             {
-                return NotFound();
+                var res = await _hostService.DeleteHost(id);
+                return Ok(res);
             }
-
-            _context.Hosts.Remove(host);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool HostExists(int id)
-        {
-            return _context.Hosts.Any(e => e.HostId == id);
+            catch (CustomException ex)
+            {
+                return StatusCode(ex.StatusCode, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An unexpected error occurred: " + ex.Message);
+            }
         }
     }
 }

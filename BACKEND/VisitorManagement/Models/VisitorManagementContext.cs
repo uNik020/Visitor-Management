@@ -103,7 +103,7 @@ public partial class VisitorManagementContext : DbContext
             entity.Property(e => e.Email).HasMaxLength(100);
             entity.Property(e => e.FullName).HasMaxLength(100);
             entity.Property(e => e.PhoneNumber).HasMaxLength(20);
-            entity.Property(e => e.PhotoPath).HasMaxLength(255);
+            //entity.Property(e => e.PhotoPath).HasMaxLength(255);
             entity.Property(e => e.Purpose).HasMaxLength(255);
         });
 

@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
+using VisitorManagement.DTO;
+using VisitorManagement.Interfaces;
 using VisitorManagement.Models;
 
 namespace VisitorManagement.Controllers
@@ -13,95 +9,76 @@ namespace VisitorManagement.Controllers
     [ApiController]
     public class VisitsController : ControllerBase
     {
-        private readonly VisitorManagementContext _context;
+        private readonly IVisitService _visitService;
 
-        public VisitsController(VisitorManagementContext context)
+        public VisitsController(IVisitService visitService)
         {
-            _context = context;
+            _visitService = visitService;
         }
 
         // GET: api/Visits
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Visit>>> GetVisits()
+        public async Task<ActionResult<IEnumerable<VisitDto>>> GetVisits()
         {
-            return await _context.Visits.ToListAsync();
+            var visits = await _visitService.GetAllVisitsAsync();
+            return Ok(visits);
         }
 
         // GET: api/Visits/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Visit>> GetVisit(int id)
+        public async Task<ActionResult<VisitDto>> GetVisit(int id)
         {
-            var visit = await _context.Visits.FindAsync(id);
-
+            var visit = await _visitService.GetVisitByIdAsync(id);
             if (visit == null)
             {
                 return NotFound();
             }
 
-            return visit;
-        }
-
-        // PUT: api/Visits/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutVisit(int id, Visit visit)
-        {
-            if (id != visit.VisitId)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(visit).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!VisitExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return Ok(visit);
         }
 
         // POST: api/Visits
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Visit>> PostVisit(Visit visit)
+        public async Task<ActionResult> PostVisit(VisitCreateDto visitDto)
         {
-            _context.Visits.Add(visit);
-            await _context.SaveChangesAsync();
+            var success = await _visitService.CreateVisitAsync(visitDto);
+            if (!success)
+            {
+                return BadRequest("Failed to create visit");
+            }
 
-            return CreatedAtAction("GetVisit", new { id = visit.VisitId }, visit);
+            return Ok("Visit created successfully");
+        }
+
+        // PUT: api/Visits/5
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutVisit(int id, VisitCreateDto visit)
+        {
+            if (id != visit.VisitId)
+            {
+                return BadRequest("Visit ID mismatch");
+            }
+
+            var success = await _visitService.UpdateVisitAsync(visit);
+            if (!success)
+            {
+                return NotFound("Visit not found or update failed");
+            }
+
+            return Ok("Visit updated successfully");
         }
 
         // DELETE: api/Visits/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteVisit(int id)
         {
-            var visit = await _context.Visits.FindAsync(id);
-            if (visit == null)
+            var success = await _visitService.DeleteVisitAsync(id);
+            if (!success)
             {
-                return NotFound();
+                return NotFound("Visit not found");
             }
 
-            _context.Visits.Remove(visit);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool VisitExists(int id)
-        {
-            return _context.Visits.Any(e => e.VisitId == id);
+            return Ok("Visit deleted successfully");
         }
     }
 }

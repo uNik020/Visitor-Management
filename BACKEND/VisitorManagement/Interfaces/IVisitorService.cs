@@ -10,5 +10,7 @@ namespace VisitorManagement.Interfaces
         public Task<string> PutVisitor(int id, Visitor visitor);
         public Task<string> DeleteVisitor(int id);
 
+        Task<Visitor> PostVisitor(VisitorCreateDto visitorDto);
+
     }
 }

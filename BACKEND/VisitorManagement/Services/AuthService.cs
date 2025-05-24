@@ -67,16 +67,16 @@ namespace VisitorManagement.Services
         {
             if (loginDto.Email != null && loginDto.Password != null)
             {
-                var admin = _context.Admins.SingleOrDefault(u => u.Email == loginDto.Email);
+                var admin = await _context.Admins.SingleOrDefaultAsync(u => u.Email == loginDto.Email);
                 if (admin != null)
                 {
-                    bool isPasswordValid = BCrypt.Net.BCrypt.Verify(loginDto.Password, user.PasswordHash);
+                    bool isPasswordValid = BCrypt.Net.BCrypt.Verify(loginDto.Password, admin.PasswordHash);
 
                     if (isPasswordValid)
                     {
                         var claims = new List<Claim>
                         {
-                        new Claim(JwtRegisteredClaimNames.Sub,_configuration["Jwt:Subject"]),
+                        new Claim(JwtRegisteredClaimNames.Sub, _configuration["Jwt:Subject"]),
                         new Claim("id",admin.AdminId.ToString()),
                         new Claim("email",admin.Email),
                         new Claim("name",admin.Username)
