@@ -1,0 +1,84 @@
+.manage-hosts-container {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.manage-hosts-container h2 {
+  margin-bottom: 1.5rem;
+  font-size: 1.8rem;
+  color: #000;
+}
+
+.host-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.host-form input {
+  flex: 1 1 200px;
+  padding: 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.actions button {
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.actions button[type="submit"] {
+  background-color: black;
+  color: white;
+}
+
+.actions button[type="button"] {
+  background-color: #ccc;
+  color: #333;
+}
+
+.host-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.host-table th,
+.host-table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.host-table th {
+  background-color: #f4f4f4;
+}
+
+.host-table button {
+  padding: 0.4rem 0.8rem;
+  margin-right: 0.5rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button.edit {
+  background-color: #007bff;
+  color: white;
+}
+
+button.delete {
+  background-color: #dc3545;
+  color: white;
+}

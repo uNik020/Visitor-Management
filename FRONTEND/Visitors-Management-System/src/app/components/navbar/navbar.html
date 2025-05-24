@@ -1,0 +1,16 @@
+<nav class="navbar">
+  <div class="navbar-container">
+    <div class="logo">VisitorManager</div>
+
+    <div class="nav-links" [class.mobile-open]="isMobileMenuOpen">
+      <a routerLink="/admin/dashboard" (click)="closeMobileMenu()">Dashboard</a>
+      <a routerLink="/admin/visitor-list" (click)="closeMobileMenu()">Visitors</a>
+      <a routerLink="/appointments" (click)="closeMobileMenu()">Appointments</a>
+      <a routerLink="/login" (click)="closeMobileMenu()">Logout</a>
+    </div>
+
+    <button class="hamburger" (click)="toggleMobileMenu()">
+      ☰
+    </button>
+  </div>
+</nav>

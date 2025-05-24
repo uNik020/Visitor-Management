@@ -1,0 +1,33 @@
+<div class="register-container">
+  <div class="register-card">
+    <h2>Register</h2>
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <label>Full Name</label>
+      <input type="text" formControlName="fullName" placeholder="Enter full name" required />
+
+      <label>Email</label>
+      <input type="email" formControlName="email" placeholder="Enter email" required />
+
+      <label>Contact Number</label>
+      <input type="tel" formControlName="contact" placeholder="Enter 10-digit contact" required />
+
+      <label>Password</label>
+      <input type="password" formControlName="password" placeholder="Enter password" required />
+
+      <label>Confirm Password</label>
+      <input type="password" formControlName="confirmPassword" placeholder="Confirm password" required />
+
+      <div *ngIf="registerForm.errors?.['mismatch']" class="error">
+  Passwords do not match.
+</div>
+
+
+      <button type="submit" [disabled]="registerForm.invalid">Register</button>
+    </form>
+
+    <p class="login-link">
+      Already have an account?
+      <a routerLink='/login' href="../login">Login</a>
+    </p>
+  </div>
+</div>

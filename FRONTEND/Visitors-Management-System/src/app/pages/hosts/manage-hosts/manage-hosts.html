@@ -1,0 +1,38 @@
+<div class="manage-hosts-container">
+  <h2>Manage Hosts</h2>
+
+  <form [formGroup]="hostForm" (ngSubmit)="onSubmit()" class="host-form">
+    <input type="text" placeholder="Full Name" formControlName="fullName" />
+    <input type="email" placeholder="Email" formControlName="email" />
+    <input type="text" placeholder="Contact Number" formControlName="contact" />
+
+    <div class="actions">
+      <button type="submit">{{ editingIndex !== null ? 'Update' : 'Add Host' }}</button>
+      <button type="button" (click)="cancelEdit()" *ngIf="editingIndex !== null">Cancel</button>
+    </div>
+  </form>
+
+  <table class="host-table">
+    <thead>
+      <tr>
+        <th>Sr. No.</th>
+        <th>Full Name</th>
+        <th>Email</th>
+        <th>Contact</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let host of hosts; let i = index">
+        <td>{{ i + 1 }}</td>
+        <td>{{ host.fullName }}</td>
+        <td>{{ host.email }}</td>
+        <td>{{ host.contact }}</td>
+        <td>
+          <button class="edit" (click)="editHost(i)">Edit</button>
+          <button class="delete" (click)="deleteHost(i)">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

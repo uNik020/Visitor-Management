@@ -1,0 +1,43 @@
+<div class="dashboard-container">
+  <h1 class="title">Admin Dashboard</h1>
+
+  <div class="cards">
+    <div class="card" *ngFor="let item of summary">
+      <div class="icon">{{ item.icon }}</div>
+      <div class="info">
+        <h3>{{ item.title }}</h3>
+        <p>{{ item.count }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="recent-section">
+    <h2>Recent Visitors</h2>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Time</th>
+            <th>Host</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let visitor of recentVisitors">
+            <td>{{ visitor.name }}</td>
+            <td>{{ visitor.time }}</td>
+            <td>{{ visitor.host }}</td>
+            <td>{{ visitor.status }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="actions">
+      <button routerLink="/admin/add-visitor">Add Visitor</button>
+      <button routerLink="/admin/visitor-list">Manage Visitors</button>
+      <button>Export Data</button>
+    </div>
+  </div>
+</div>
