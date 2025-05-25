@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import Swal from 'sweetalert2';
+import { SessionStorageService } from '../../services/sessionStorage/session-storage-service';
 
 @Component({
   selector: 'app-navbar',
@@ -11,7 +12,7 @@ import Swal from 'sweetalert2';
 })
 export class Navbar {
 
-  constructor(private router: Router){}
+  constructor(private router: Router, private sessionStorage:SessionStorageService){}
    isMobileMenuOpen = false;
    isAdminLoggedIn: boolean = false;
 
@@ -20,7 +21,7 @@ export class Navbar {
 }
 
 checkAdminLoginStatus(): void {
-  this.isAdminLoggedIn = sessionStorage.getItem('adminEmail') !== null;
+  this.isAdminLoggedIn = this.sessionStorage.getItem('adminEmail') !== null;
 }
 
 

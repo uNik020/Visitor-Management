@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth/auth.service';
 import Swal from 'sweetalert2';
+import { SessionStorageService } from '../../services/sessionStorage/session-storage-service';
 
 @Component({
   selector: 'app-login',
@@ -20,7 +21,7 @@ export class Login {
   this.showPassword = !this.showPassword;
   }
 
-  constructor(private fb: FormBuilder, private router: Router,private authService : AuthService) {
+  constructor(private fb: FormBuilder,private sessionStorage:SessionStorageService, private router: Router,private authService : AuthService) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required]
@@ -42,8 +43,8 @@ export class Login {
           });
 
           // Store session values or tokens as needed
-          sessionStorage.setItem('adminEmail', response.email);
-          sessionStorage.setItem('adminPass', response.passwordHash); // if your API returns it
+          this.sessionStorage.setItem('adminEmail', response.email);
+          this.sessionStorage.setItem('adminPass', response.passwordHash); // if your API returns it
 
           this.router.navigate(['/admin/dashboard']); // navigate to your desired route
         },
