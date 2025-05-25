@@ -5,8 +5,10 @@ import { RouterModule } from '@angular/router';
   selector: 'app-footer',
   imports: [RouterModule],
   templateUrl: './footer.html',
-  styleUrl: './footer.css'
+  styleUrl: './footer.css',
+  standalone: true
 })
 export class Footer {
+
 
 }
