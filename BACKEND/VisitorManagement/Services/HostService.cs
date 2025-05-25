@@ -46,37 +46,23 @@ namespace VisitorManagement.Services
             return await _context.Hosts.ToListAsync();
         }
 
-        public async Task<string> PutHost(int id, Hosts host)
+        public async Task<string> PutHost(int id, HostCreateDto hostDto)
         {
-            if (id != host.HostId)
+            var host = await _context.Hosts.FindAsync(id);
+            if (host == null)
             {
                 throw new CustomException(404, "Host not found");
             }
 
-            _context.Entry(host).State = EntityState.Modified;
+            host.FullName = hostDto.FullName;
+            host.Email = hostDto.Email;
+            host.PhoneNumber = hostDto.PhoneNumber;
+            host.DepartmentId = hostDto.DepartmentId;
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!HostExists(id))
-                {
-                    throw new CustomException(404, "Host not found");
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            _context.Hosts.Update(host);
+            await _context.SaveChangesAsync();
 
             return "Host modified successfully";
-        }
-
-        private bool HostExists(int id)
-        {
-            return _context.Hosts.Any(e => e.HostId == id);
         }
 
         public async Task<Hosts> PostHost(HostCreateDto hostDto)

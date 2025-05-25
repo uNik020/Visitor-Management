@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace VisitorManagement.Models;
+﻿namespace VisitorManagement.Models;
 
 public partial class Department
 {

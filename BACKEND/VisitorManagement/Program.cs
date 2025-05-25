@@ -17,6 +17,7 @@ builder.Services.AddTransient<IVisitorService, VisitorService>();
 builder.Services.AddTransient<IVisitService, VisitService>();
 builder.Services.AddTransient<IAuthService, AuthService>();
 builder.Services.AddTransient<IEmailService, EmailService>();
+builder.Services.AddTransient<IDepartmentService, DepartmentService>();
 
 builder.Services.AddDbContext<VisitorManagementContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));

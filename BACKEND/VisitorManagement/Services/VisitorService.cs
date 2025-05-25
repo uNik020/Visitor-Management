@@ -46,38 +46,25 @@ namespace VisitorManagement.Services
             return await _context.Visitors.ToListAsync();
         }
 
-        public async Task<string> PutVisitor(int id, Visitor visitor)
+        public async Task<string> PutVisitor(int id, VisitorCreateDto visitorDto)
         {
-            if (id != visitor.VisitorId)
+            var visitor = await _context.Visitors.FindAsync(id);
+            if (visitor == null)
             {
                 throw new CustomException(404, "Visitor not found");
             }
 
-            _context.Entry(visitor).State = EntityState.Modified;
+            visitor.FullName = visitorDto.FullName;
+            visitor.PhoneNumber = visitorDto.PhoneNumber;
+            visitor.Email = visitorDto.Email;
+            visitor.Purpose = visitorDto.Purpose;
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!VisitorExists(id))
-                {
-                    throw new CustomException(404, "visitor not found");
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            _context.Visitors.Update(visitor);
+            await _context.SaveChangesAsync();
 
             return "Visitor modified successfully";
         }
 
-        private bool VisitorExists(int id)
-        {
-            return _context.Visitors.Any(e => e.VisitorId == id);
-        }
 
         public async Task<Visitor> PostVisitor(VisitorCreateDto visitorDto)
         {

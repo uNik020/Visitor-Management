@@ -1,10 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using VisitorManagement.DTO;
 using VisitorManagement.HelperClasses;
 using VisitorManagement.Models;
@@ -60,11 +55,11 @@ namespace VisitorManagement.Controllers
         // PUT: api/Host/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutHost(int id, myHosts host)
+        public async Task<IActionResult> PutHost(int id, HostCreateDto hostDto)
         {
             try
             {
-                var res = await _hostService.PutHost(id, host);
+                var res = await _hostService.PutHost(id, hostDto);
                 return Ok(res);
             }
             catch (CustomException ex)
@@ -76,6 +71,7 @@ namespace VisitorManagement.Controllers
                 return StatusCode(500, "An unexpected error occurred: " + ex.Message);
             }
         }
+
 
         // POST: api/Host
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

@@ -7,7 +7,7 @@ namespace VisitorManagement.Services
     {
         public Task<IEnumerable<Hosts>> GetHosts();
         public Task<Hosts> GetHost(int id);
-        public Task<string> PutHost(int id, Hosts host);
+        public Task<string> PutHost(int id, HostCreateDto hostDto);
         public Task<string> DeleteHost(int id);
         Task<Hosts> PostHost(HostCreateDto hostDto);
 
