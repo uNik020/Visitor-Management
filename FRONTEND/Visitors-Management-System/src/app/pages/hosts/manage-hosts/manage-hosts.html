@@ -4,12 +4,25 @@
   <form [formGroup]="hostForm" (ngSubmit)="onSubmit()" class="host-form">
     <input type="text" placeholder="Full Name" formControlName="fullName" />
     <input type="email" placeholder="Email" formControlName="email" />
-    <input type="text" placeholder="Contact Number" formControlName="phoneNumber" />
-    <input type="text" placeholder="Department Id" formControlName="departmentId" />
-
+    <input
+      type="text"
+      placeholder="Contact Number"
+      formControlName="phoneNumber"
+    />
+    <!-- <input type="text" placeholder="Department Id" formControlName="departmentId" /> -->
+    <select formControlName="departmentId">
+      <option value="" disabled selected>Select department</option>
+      <option *ngFor="let dept of departments" [value]="dept.departmentId">
+        {{ dept.departmentName }}
+      </option>
+    </select>
     <div class="actions">
-      <button type="submit">{{ editingId !== null ? 'Update' : 'Add Host' }}</button>
-      <button type="button" (click)="cancelEdit()" *ngIf="editingId !== null">Cancel</button>
+      <button type="submit">
+        {{ editingId !== null ? 'Update' : 'Add Host' }}
+      </button>
+      <button type="button" (click)="cancelEdit()" *ngIf="editingId !== null">
+        Cancel
+      </button>
     </div>
   </form>
 
@@ -33,7 +46,9 @@
         <td>{{ host.departmentId }}</td>
         <td>
           <button class="edit" (click)="editHost(host)">Edit</button>
-          <button class="delete" (click)="deleteHost(host.hostId)">Delete</button>
+          <button class="delete" (click)="deleteHost(host.hostId)">
+            Delete
+          </button>
         </td>
       </tr>
     </tbody>

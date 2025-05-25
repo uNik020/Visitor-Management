@@ -2,42 +2,67 @@
   <h2>Add Visitor</h2>
   <form [formGroup]="visitorForm" (ngSubmit)="onSubmit()">
     <div class="form-grid">
-
-      <label>Full Name
+      <label
+        >Full Name
         <input type="text" formControlName="fullName" />
-        <div class="error" *ngIf="visitorForm.get('fullName')?.touched && visitorForm.get('fullName')?.invalid">
+        <div
+          class="error"
+          *ngIf="visitorForm.get('fullName')?.touched && visitorForm.get('fullName')?.invalid"
+        >
           Full Name is required.
         </div>
       </label>
 
-      <label>Email
+      <label
+        >Email
         <input type="email" formControlName="email" />
-        <div class="error" *ngIf="visitorForm.get('email')?.touched && visitorForm.get('email')?.invalid">
+        <div
+          class="error"
+          *ngIf="visitorForm.get('email')?.touched && visitorForm.get('email')?.invalid"
+        >
           Valid email is required.
         </div>
       </label>
 
-      <label>Contact Number
+      <label
+        >Contact Number
         <input type="text" formControlName="contact" />
-        <div class="error" *ngIf="visitorForm.get('contact')?.touched && visitorForm.get('contact')?.invalid">
+        <div
+          class="error"
+          *ngIf="visitorForm.get('contact')?.touched && visitorForm.get('contact')?.invalid"
+        >
           Enter a valid 10-digit phone number.
         </div>
       </label>
 
-      <label>Address (Optional)
+      <label
+        >Address (Optional)
         <textarea formControlName="address"></textarea>
       </label>
 
-      <label>Visit Purpose
+      <label
+        >Visit Purpose
         <input type="text" formControlName="purpose" />
-        <div class="error" *ngIf="visitorForm.get('purpose')?.touched && visitorForm.get('purpose')?.invalid">
+        <div
+          class="error"
+          *ngIf="visitorForm.get('purpose')?.touched && visitorForm.get('purpose')?.invalid"
+        >
           Visit Purpose is required.
         </div>
       </label>
 
-      <label>Host Name
-        <input type="text" formControlName="hostName" />
-        <div class="error" *ngIf="visitorForm.get('hostName')?.touched && visitorForm.get('hostName')?.invalid">
+      <label
+        >Host Name
+        <select formControlName="hostName">
+          <option value="" disabled selected>Select Host</option>
+          <option *ngFor="let host of hosts" [value]="host.hostId">
+            {{ host.fullName }}
+          </option>
+        </select>
+        <div
+          class="error"
+          *ngIf="visitorForm.get('hostName')?.touched && visitorForm.get('hostName')?.invalid"
+        >
           Host Name is required.
         </div>
       </label>
@@ -55,7 +80,6 @@
           Check-In Time is required.
         </div>
       </label> -->
-
     </div>
 
     <button type="submit" [disabled]="visitorForm.invalid">Add Visitor</button>

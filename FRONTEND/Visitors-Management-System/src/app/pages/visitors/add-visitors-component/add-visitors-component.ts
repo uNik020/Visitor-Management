@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import Swal from 'sweetalert2';
+import { HostService } from '../../../services/Host/host.service';
 
 @Component({
   selector: 'app-add-visitors-component',
@@ -12,19 +13,37 @@ import Swal from 'sweetalert2';
 })
 export class AddVisitorsComponent {
   visitorForm: FormGroup;
+  hosts:any[] = [];
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder,private hostService: HostService,private cd: ChangeDetectorRef) {
     this.visitorForm = this.fb.group({
       fullName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      contact: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
+      phoneNumber: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
       address: [''],
       purpose: ['', Validators.required],
-      hostName: ['', Validators.required],
+      hostId: ['', Validators.required],
       // checkInDate: ['', Validators.required],
       // checkInTime: ['', Validators.required]
     });
   }
+
+  ngOnInit(): void {
+      this.loadHosts();
+    }
+  
+    loadHosts() {
+      this.hostService.getHosts().subscribe(
+        (data: any) => {
+          setTimeout(() => {
+            this.hosts = [...data];
+            console.log(this.hosts);
+            this.cd.detectChanges();
+          },500);
+        },
+        (err) => Swal.fire('Error', err.message, 'error')
+      );
+    }
 
   onSubmit(): void {
     if (this.visitorForm.valid) {

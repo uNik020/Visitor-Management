@@ -1,40 +1,72 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import Swal from 'sweetalert2';
 import { HostService } from '../../../services/Host/host.service';
+import { DepartmentService } from '../../../services/Department/department.service';
 
 @Component({
   selector: 'app-manage-hosts',
   standalone: true,
   imports: [RouterModule, ReactiveFormsModule, CommonModule],
   templateUrl: './manage-hosts.html',
-  styleUrl: './manage-hosts.css'
+  styleUrl: './manage-hosts.css',
 })
 export class ManageHosts implements OnInit {
   hostForm: FormGroup;
   hosts: any[] = [];
+  departments: any[] = [];
   editingId: number | null = null;
 
-  constructor(private fb: FormBuilder,private cd: ChangeDetectorRef, private hostService: HostService) {
+  constructor(
+    private fb: FormBuilder,
+    private cd: ChangeDetectorRef,
+    private hostService: HostService,
+    private departmentService: DepartmentService
+  ) {
     this.hostForm = this.fb.group({
       fullName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      phoneNumber: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
-      departmentId: ['', Validators.required]
+      phoneNumber: [
+        '',
+        [Validators.required, Validators.pattern('^[0-9]{10}$')],
+      ],
+      departmentId: ['', Validators.required],
     });
   }
 
   ngOnInit(): void {
     this.loadHosts();
+    this.loadDepartments();
   }
 
-  loadHosts(): void {
-    this.cd.detectChanges();
-    this.hostService.getHosts().subscribe({
-      next: (data) => (this.hosts = data),
-      error: (err) => Swal.fire('Error', err.message, 'error')
+  loadHosts() {
+    this.hostService.getHosts().subscribe(
+      (data: any) => {
+        setTimeout(() => {
+          this.hosts = [...data];
+          this.cd.detectChanges();
+        });
+      },
+      (err) => Swal.fire('Error', err.message, 'error')
+    );
+  }
+
+  loadDepartments() {
+    this.departmentService.getDepartments().subscribe({
+      next: (data: any) => {
+        setTimeout(() => {
+          this.departments = [...data];
+          this.cd.detectChanges();
+        });
+      },
+      error: (err) => Swal.fire('Error', err.message, 'error'),
     });
   }
 
@@ -47,13 +79,13 @@ export class ManageHosts implements OnInit {
     const hostData = this.hostForm.value;
 
     if (this.editingId !== null) {
-      this.hostService.updateHost(this.editingId, hostData).subscribe({
+      this.hostService.updateHost(hostData, this.editingId).subscribe({
         next: () => {
           Swal.fire('Success', 'Host updated successfully', 'success');
           this.loadHosts();
           this.cancelEdit();
         },
-        error: (err) => Swal.fire('Error', err.message, 'error')
+        error: (err) => Swal.fire('Error', err.message, 'error'),
       });
     } else {
       this.hostService.addHost(hostData).subscribe({
@@ -62,7 +94,7 @@ export class ManageHosts implements OnInit {
           this.loadHosts();
           this.hostForm.reset();
         },
-        error: (err) => Swal.fire('Error', err.message, 'error')
+        error: (err) => Swal.fire('Error', err.message, 'error'),
       });
     }
   }
@@ -73,7 +105,7 @@ export class ManageHosts implements OnInit {
       fullName: host.fullName,
       email: host.email,
       phoneNumber: host.phoneNumber,
-      departmentId: host.departmentId
+      departmentId: host.departmentId,
     });
   }
 
@@ -83,7 +115,7 @@ export class ManageHosts implements OnInit {
       text: 'This will delete the host!',
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonText: 'Yes, delete it!'
+      confirmButtonText: 'Yes, delete it!',
     }).then((result) => {
       if (result.isConfirmed) {
         this.hostService.deleteHost(id).subscribe({
@@ -91,7 +123,7 @@ export class ManageHosts implements OnInit {
             Swal.fire('Deleted!', 'Host has been deleted.', 'success');
             this.loadHosts();
           },
-          error: (err) => Swal.fire('Error', err.message, 'error')
+          error: (err) => Swal.fire('Error', err.message, 'error'),
         });
       }
     });
