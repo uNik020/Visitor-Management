@@ -33,8 +33,14 @@ namespace VisitorManagement.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(DepartmentCreateDto departmentDto)
         {
+            try { 
             var result = await _departmentService.CreateDepartmentAsync(departmentDto);
             return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
         [HttpPut("{id}")]
@@ -45,9 +51,9 @@ namespace VisitorManagement.Controllers
                 var result = await _departmentService.UpdateDepartmentAsync(id, departmentDto);
                 return Ok(result);
             }
-            catch (CustomException ex)
+            catch (Exception ex)
             {
-                return StatusCode(ex.StatusCode, ex.Message);
+                return StatusCode(500, ex.Message);
             }
         }
 

@@ -39,6 +39,14 @@ namespace VisitorManagement.Services
 
         public async Task<string> CreateDepartmentAsync(DepartmentCreateDto departmentDto)
         {
+            var dept = await _context.Departments
+     .SingleOrDefaultAsync(d => d.DepartmentName.ToLower() == departmentDto.DepartmentName.ToLower());
+
+            if(dept is not null)
+            {
+                throw new Exception("Department already exist");
+            }
+
             var department = new Department
             {
                 DepartmentName = departmentDto.DepartmentName
