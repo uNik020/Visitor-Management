@@ -1,12 +1,10 @@
 <nav class="navbar">
   <div class="navbar-container">
-    <div class="logo">VisitorManager</div>
+    <div class="logo">InOutly</div>
 
     <div class="nav-links" [class.mobile-open]="isMobileMenuOpen">
       <a routerLink="/admin/dashboard" >Dashboard</a>
       <a routerLink="/admin/visitor-list" >Visitors</a>
-      <a routerLink="/appointments" >Appointments</a>
-      
       
       <ng-container *ngIf="isAdminLoggedIn; else loginBtn">
         <button (click)="logoutAdmin()">Logout</button>

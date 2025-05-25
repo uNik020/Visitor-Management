@@ -21,4 +21,17 @@ export class VisitorService {
       responseType: 'text'
     });
   }
+
+  public updateVisitor(visitor: any, visitorId: any): Observable<any> {
+    return this.httpClient.put(`${baseurl}/Visitor/${visitorId}`, visitor, {
+      responseType: 'text'
+    });
+  }
+
+  // Delete visitor
+  public deleteVisitor(visitorId: any): Observable<any> {
+    return this.httpClient.delete(`${baseurl}/Visitor/${visitorId}`, {
+      responseType: 'text'
+    });
+  }
 }
