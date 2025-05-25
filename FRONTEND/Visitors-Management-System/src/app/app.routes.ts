@@ -10,10 +10,9 @@ import { ManageHosts } from './pages/hosts/manage-hosts/manage-hosts';
 import { ManageDepartments } from './pages/manage-departments/manage-departments';
 
 export const routes: Routes = [
-  { path: '**', redirectTo: 'login' },
   { path: '', component: Login },
   { path: 'register', component: Register },
-
+  
   {
     path: 'admin',
     component: AdminDashboard,
@@ -26,6 +25,7 @@ export const routes: Routes = [
       { path: 'manage-hosts', component: ManageHosts },
       { path: 'manage-departments', component: ManageDepartments }
     ]
-  }
+  },
+  { path: '**', redirectTo: 'login' }
 ];
 
