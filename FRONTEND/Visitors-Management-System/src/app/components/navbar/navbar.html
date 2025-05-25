@@ -3,10 +3,17 @@
     <div class="logo">VisitorManager</div>
 
     <div class="nav-links" [class.mobile-open]="isMobileMenuOpen">
-      <a routerLink="/admin/dashboard" (click)="closeMobileMenu()">Dashboard</a>
-      <a routerLink="/admin/visitor-list" (click)="closeMobileMenu()">Visitors</a>
-      <a routerLink="/appointments" (click)="closeMobileMenu()">Appointments</a>
-      <a routerLink="/login" (click)="closeMobileMenu()">Logout</a>
+      <a routerLink="/admin/dashboard" >Dashboard</a>
+      <a routerLink="/admin/visitor-list" >Visitors</a>
+      <a routerLink="/appointments" >Appointments</a>
+      
+      
+      <ng-container *ngIf="isAdminLoggedIn; else loginBtn">
+        <button (click)="logoutAdmin()">Logout</button>
+      </ng-container>
+      <ng-template #loginBtn>
+        <button routerLink="">Login</button>
+      </ng-template>
     </div>
 
     <button class="hamburger" (click)="toggleMobileMenu()">

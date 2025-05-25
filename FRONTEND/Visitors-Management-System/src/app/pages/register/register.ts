@@ -64,8 +64,8 @@ toggleConfirmPasswordVisibility() {
         confirmButtonText: 'Cool'
       });
         // console.log(data);
-        sessionStorage.setItem('adminPass', data.passwordHash);
-        sessionStorage.setItem('adminEmail', data.email);
+        // sessionStorage.setItem('adminPass', data.passwordHash);
+        // sessionStorage.setItem('adminEmail', data.email);
         this.router.navigate(['/']);
       },
       (error) => {

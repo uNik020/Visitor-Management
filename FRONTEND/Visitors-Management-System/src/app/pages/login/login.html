@@ -5,8 +5,16 @@
       <label>Email</label>
       <input type="email" formControlName="email" placeholder="Enter your email" required />
 
-      <label>Password</label>
-      <input type="password" formControlName="password" placeholder="Enter your password" required />
+      <label>
+        Password
+        <div class="password-wrapper">
+          <input [type]="showPassword ? 'text' : 'password'" formControlName="password" placeholder="Enter your password" />
+          <span class="toggle-icon" (click)="togglePasswordVisibility()">
+            {{ showPassword ? '🙈' : '👁️' }}
+          </span>
+        </div>
+      </label>
+
 
       <button type="submit" [disabled]="loginForm.invalid">Login</button>
     </form>
