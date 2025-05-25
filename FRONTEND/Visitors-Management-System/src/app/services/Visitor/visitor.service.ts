@@ -17,7 +17,7 @@ export class VisitorService {
 
   // Add new host
   public addVisitor(visitor: any): Observable<any> {
-    return this.httpClient.post(`${baseurl}/Visitor`, visitor, {
+    return this.httpClient.post(`${baseurl}/Visitor`,visitor, {
       responseType: 'text'
     });
   }

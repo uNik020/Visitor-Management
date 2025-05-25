@@ -26,10 +26,10 @@
 
       <label
         >Contact Number
-        <input type="text" formControlName="contact" />
+        <input type="text" formControlName="phoneNumber" />
         <div
           class="error"
-          *ngIf="visitorForm.get('contact')?.touched && visitorForm.get('contact')?.invalid"
+          *ngIf="visitorForm.get('phoneNumber')?.touched && visitorForm.get('phoneNumber')?.invalid"
         >
           Enter a valid 10-digit phone number.
         </div>
@@ -51,10 +51,10 @@
         </div>
       </label>
 
-      <label
-        >Host Name
-        <select formControlName="hostName">
-          <option value="" disabled selected>Select Host</option>
+      <label>Host Name
+        <select formControlName="hostId">
+          <option value="" disabled>Select Host</option>
+
           <option *ngFor="let host of hosts" [value]="host.hostId">
             {{ host.fullName }}
           </option>
