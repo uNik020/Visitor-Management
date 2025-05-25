@@ -60,9 +60,16 @@ namespace VisitorManagement.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
+            try
+            {
             var success = await _departmentService.DeleteDepartmentAsync(id);
             if (!success) return NotFound("Department not found");
             return Ok("Department deleted successfully");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
     }
 }

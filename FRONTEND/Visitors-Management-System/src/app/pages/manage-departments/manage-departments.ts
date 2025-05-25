@@ -110,7 +110,7 @@ export class ManageDepartments implements OnInit {
             console.log(error);
             Swal.fire({
               title: 'Error!',
-              text: `An unexpected error occurred.{${error.message}}`,
+              text: `An unexpected error occurred.{${error.error}}`,
               icon: 'error',
               confirmButtonText: 'Ok',
             });
@@ -156,7 +156,7 @@ export class ManageDepartments implements OnInit {
             console.log(error);
             Swal.fire({
               title: 'Error!',
-              text: `An unexpected error occurred: ${error.message}`,
+              text: `An unexpected error occurred: ${error.error}`,
               icon: 'error',
               confirmButtonText: 'Ok',
             });

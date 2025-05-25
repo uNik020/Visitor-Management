@@ -71,6 +71,11 @@ namespace VisitorManagement.Services
 
         public async Task<bool> DeleteDepartmentAsync(int id)
         {
+            var hosts = _context.Hosts.Any(h => h.DepartmentId == id);
+            if (hosts)
+            {
+                throw new Exception("DepartmentId is used in Host Table!");
+            }
             var department = await _context.Departments.FindAsync(id);
             if (department == null) return false;
 
