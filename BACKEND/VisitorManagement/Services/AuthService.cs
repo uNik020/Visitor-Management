@@ -63,7 +63,7 @@ namespace VisitorManagement.Services
 
             return "If the email is registered, you'll receive a reset code.";
         }
-        public async Task<TokenDto> Login(LoginDto loginDto)
+        public async Task<TokenDto> Login(AdminLoginDto loginDto)
         {
             if (loginDto.Email != null && loginDto.Password != null)
             {
@@ -79,7 +79,7 @@ namespace VisitorManagement.Services
                         new Claim(JwtRegisteredClaimNames.Sub, _configuration["Jwt:Subject"]),
                         new Claim("id",admin.AdminId.ToString()),
                         new Claim("email",admin.Email),
-                        new Claim("name",admin.Username)
+                        new Claim("name",admin.FullName)
 
                     };
 
@@ -94,7 +94,7 @@ namespace VisitorManagement.Services
                         {
                             JwtToken = jwtToken,
                             AdminId = admin.AdminId,
-                            Username = admin.Username,
+                            Username = admin.FullName,
                             Email = admin.Email
                         };
 
@@ -114,6 +114,22 @@ namespace VisitorManagement.Services
             {
                 throw new Exception("credentials are not valid!");
             }
+        }
+
+        public async Task<Admin> RegisterAdmin(AdminRegisterDto adminDto)
+        {
+            var passwordHash = BCrypt.Net.BCrypt.HashPassword(adminDto.PasswordHash);
+            var user = new Admin()
+            {
+                FullName = adminDto.FullName,
+                Email = adminDto.Email,
+                PhoneNumber = adminDto.PhoneNumber,
+                PasswordHash = passwordHash
+            };
+            _context.Admins.Add(user);
+            await _context.SaveChangesAsync();
+
+            return user;
         }
 
         public async Task<string> ResetPassword(ResetPasswordRequest request)

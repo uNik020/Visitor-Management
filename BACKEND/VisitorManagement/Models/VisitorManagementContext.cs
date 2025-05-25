@@ -34,13 +34,13 @@ public partial class VisitorManagementContext : DbContext
         {
             entity.HasKey(e => e.AdminId).HasName("PK__Admins__719FE4E892EA49A9");
 
-            entity.HasIndex(e => e.Username, "UQ__Admins__536C85E457A42CF5").IsUnique();
+            entity.HasIndex(e => e.FullName, "UQ__Admins__536C85E457A42CF5").IsUnique();
             entity.Property(e => e.AdminId).HasColumnName("AdminId");
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
             entity.Property(e => e.PasswordHash).HasMaxLength(255);
-            entity.Property(e => e.Username).HasMaxLength(50);
+            entity.Property(e => e.FullName).HasMaxLength(50);
         });
 
         modelBuilder.Entity<Department>(entity =>

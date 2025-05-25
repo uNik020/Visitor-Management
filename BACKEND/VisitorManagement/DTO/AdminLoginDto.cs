@@ -2,7 +2,7 @@
 
 namespace VisitorManagement.DTO
 {
-    public class LoginDto
+    public class AdminLoginDto
     {
         [Required(ErrorMessage = "Email field is required")]
         [EmailAddress(ErrorMessage = "Enter a valid Email Id")]

@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using VisitorManagement.DTO;
-using VisitorManagement.Interfaces;
 using VisitorManagement.HelperClasses;
+using VisitorManagement.Interfaces;
 using VisitorManagement.Services;
 
 namespace VisitorManagement.Controllers
@@ -18,7 +19,7 @@ namespace VisitorManagement.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<string>> Login(LoginDto user)
+        public async Task<ActionResult<string>> Login(AdminLoginDto user)
         {
             try
             {
@@ -30,6 +31,27 @@ namespace VisitorManagement.Controllers
             }
         }
 
+        [HttpPost]
+        public async Task<ActionResult<AdminRegisterDto>> PostAdmin(AdminRegisterDto adminDto)
+        {
+            try
+            {
+                var createdUser = await _authService.RegisterAdmin(adminDto);
+                return Ok(createdUser);
+            }
+            catch (DbUpdateException ex)
+            {
+                var message = ex.InnerException?.Message;
+
+                if (message?.Contains("UQ_Users_Email") == true)
+                    return BadRequest("Email already exists.");
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
 
         [HttpPost("forgot-password")]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
