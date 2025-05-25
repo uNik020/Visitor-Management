@@ -4,11 +4,12 @@
   <form [formGroup]="hostForm" (ngSubmit)="onSubmit()" class="host-form">
     <input type="text" placeholder="Full Name" formControlName="fullName" />
     <input type="email" placeholder="Email" formControlName="email" />
-    <input type="text" placeholder="Contact Number" formControlName="contact" />
+    <input type="text" placeholder="Contact Number" formControlName="phoneNumber" />
+    <input type="text" placeholder="Department Id" formControlName="departmentId" />
 
     <div class="actions">
-      <button type="submit">{{ editingIndex !== null ? 'Update' : 'Add Host' }}</button>
-      <button type="button" (click)="cancelEdit()" *ngIf="editingIndex !== null">Cancel</button>
+      <button type="submit">{{ editingId !== null ? 'Update' : 'Add Host' }}</button>
+      <button type="button" (click)="cancelEdit()" *ngIf="editingId !== null">Cancel</button>
     </div>
   </form>
 
@@ -19,6 +20,7 @@
         <th>Full Name</th>
         <th>Email</th>
         <th>Contact</th>
+        <th>Department Id</th>
         <th>Actions</th>
       </tr>
     </thead>
@@ -27,10 +29,11 @@
         <td>{{ i + 1 }}</td>
         <td>{{ host.fullName }}</td>
         <td>{{ host.email }}</td>
-        <td>{{ host.contact }}</td>
+        <td>{{ host.phoneNumber }}</td>
+        <td>{{ host.departmentId }}</td>
         <td>
-          <button class="edit" (click)="editHost(i)">Edit</button>
-          <button class="delete" (click)="deleteHost(i)">Delete</button>
+          <button class="edit" (click)="editHost(host)">Edit</button>
+          <button class="delete" (click)="deleteHost(host.hostId)">Delete</button>
         </td>
       </tr>
     </tbody>

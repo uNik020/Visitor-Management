@@ -23,11 +23,19 @@ namespace VisitorManagement.Services
                 throw new CustomException(404, "Host not found");
             }
 
-            _context.Hosts.Remove(host);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Hosts.Remove(host);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new CustomException(400, "Cannot delete host because it is referenced in other records.");
+            }
 
             return "Host deleted successfully";
         }
+
 
         public async Task<Hosts> GetHost(int id)
         {

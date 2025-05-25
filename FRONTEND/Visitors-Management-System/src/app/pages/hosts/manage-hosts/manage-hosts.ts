@@ -1,57 +1,104 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import Swal from 'sweetalert2';
+import { HostService } from '../../../services/Host/host.service';
 
 @Component({
   selector: 'app-manage-hosts',
-  imports: [RouterModule,ReactiveFormsModule, CommonModule],
+  standalone: true,
+  imports: [RouterModule, ReactiveFormsModule, CommonModule],
   templateUrl: './manage-hosts.html',
   styleUrl: './manage-hosts.css'
 })
-export class ManageHosts {
+export class ManageHosts implements OnInit {
   hostForm: FormGroup;
-  editingIndex: number | null = null;
+  hosts: any[] = [];
+  editingId: number | null = null;
 
-  hosts = [
-    { fullName: 'John Doe', email: 'john@example.com', contact: '1234567890' },
-    { fullName: 'Jane Smith', email: 'jane@example.com', contact: '9876543210' }
-  ];
-
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder,private cd: ChangeDetectorRef, private hostService: HostService) {
     this.hostForm = this.fb.group({
       fullName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      contact: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
+      phoneNumber: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
+      departmentId: ['', Validators.required]
+    });
+  }
+
+  ngOnInit(): void {
+    this.loadHosts();
+  }
+
+  loadHosts(): void {
+    this.cd.detectChanges();
+    this.hostService.getHosts().subscribe({
+      next: (data) => (this.hosts = data),
+      error: (err) => Swal.fire('Error', err.message, 'error')
     });
   }
 
   onSubmit(): void {
-    if (this.hostForm.invalid) return;
+    if (this.hostForm.invalid) {
+      Swal.fire('Validation Failed', 'Please correct the form.', 'warning');
+      return;
+    }
 
-    if (this.editingIndex !== null) {
-      this.hosts[this.editingIndex] = this.hostForm.value;
-      this.editingIndex = null;
+    const hostData = this.hostForm.value;
+
+    if (this.editingId !== null) {
+      this.hostService.updateHost(this.editingId, hostData).subscribe({
+        next: () => {
+          Swal.fire('Success', 'Host updated successfully', 'success');
+          this.loadHosts();
+          this.cancelEdit();
+        },
+        error: (err) => Swal.fire('Error', err.message, 'error')
+      });
     } else {
-      this.hosts.push(this.hostForm.value);
-    }
-
-    this.hostForm.reset();
-  }
-
-  editHost(index: number) {
-    this.editingIndex = index;
-    this.hostForm.setValue(this.hosts[index]);
-  }
-
-  deleteHost(index: number) {
-    if (confirm('Are you sure you want to delete this host?')) {
-      this.hosts.splice(index, 1);
+      this.hostService.addHost(hostData).subscribe({
+        next: () => {
+          Swal.fire('Success', 'Host added successfully', 'success');
+          this.loadHosts();
+          this.hostForm.reset();
+        },
+        error: (err) => Swal.fire('Error', err.message, 'error')
+      });
     }
   }
 
-  cancelEdit() {
-    this.editingIndex = null;
+  editHost(host: any): void {
+    this.editingId = host.hostId;
+    this.hostForm.setValue({
+      fullName: host.fullName,
+      email: host.email,
+      phoneNumber: host.phoneNumber,
+      departmentId: host.departmentId
+    });
+  }
+
+  deleteHost(id: number): void {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'This will delete the host!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.hostService.deleteHost(id).subscribe({
+          next: () => {
+            Swal.fire('Deleted!', 'Host has been deleted.', 'success');
+            this.loadHosts();
+          },
+          error: (err) => Swal.fire('Error', err.message, 'error')
+        });
+      }
+    });
+  }
+
+  cancelEdit(): void {
+    this.editingId = null;
     this.hostForm.reset();
   }
 }
