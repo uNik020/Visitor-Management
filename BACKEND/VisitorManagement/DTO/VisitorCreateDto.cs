@@ -7,7 +7,7 @@
         public string? Email { get; set; }
         public string? Address { get; set; }
         public string? Purpose { get; set; }
-        public string? HostId { get; set; }
+        public int HostId { get; set; }
         
     }
 }

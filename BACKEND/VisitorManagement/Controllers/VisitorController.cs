@@ -87,7 +87,7 @@ namespace VisitorManagement.Controllers
             try
             {
                 var createdVisitor = await _visitorService.PostVisitor(visitorDto);
-                return CreatedAtAction(nameof(_visitorService.GetVisitor), new { id = createdVisitor.VisitorId }, createdVisitor);
+                return Ok(createdVisitor);
             }
             catch (CustomException ex)
             {

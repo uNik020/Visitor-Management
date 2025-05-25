@@ -80,11 +80,17 @@ namespace VisitorManagement.Services
 
             _context.Visitors.Add(visitor);
             await _context.SaveChangesAsync();
-
+            var createdVisitor = _context.Visitors.SingleOrDefault(v => v.Email == visitorDto.Email);
+            var visit = new Visit
+            {
+                VisitorId = createdVisitor.VisitorId,
+                HostId = visitorDto.HostId,
+                VisitStatus = "Inside"
+            };
+            _context.Visits.Add(visit);
+            await _context.SaveChangesAsync();
             return visitor;
         }
-
-
 
     }
 }
