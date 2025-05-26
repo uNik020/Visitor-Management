@@ -10,7 +10,7 @@ namespace VisitorManagement.Interfaces
         public Task<string> PutVisitor(int id, VisitorCreateDto visitorDto);
         public Task<string> DeleteVisitor(int id);
 
-        Task<Visitor> PostVisitor(VisitorCreateDto visitorDto);
+        Task<VisitorCreateDto> PostVisitor(VisitorCreateDto visitorDto);
 
     }
 }

@@ -4,6 +4,8 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { RouterModule } from '@angular/router';
 import Swal from 'sweetalert2';
 import { HostService } from '../../../services/Host/host.service';
+import { VisitService } from '../../../services/Visits/visit.service';
+import { VisitorService } from '../../../services/Visitor/visitor.service';
 
 @Component({
   selector: 'app-add-visitors-component',
@@ -15,7 +17,7 @@ export class AddVisitorsComponent {
   visitorForm: FormGroup;
   hosts:any[] = [];
 
-  constructor(private fb: FormBuilder,private hostService: HostService,private cd: ChangeDetectorRef) {
+  constructor(private visitorService : VisitorService,private fb: FormBuilder,private hostService: HostService,private cd: ChangeDetectorRef) {
     this.visitorForm = this.fb.group({
       fullName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
@@ -49,17 +51,14 @@ export class AddVisitorsComponent {
     if (this.visitorForm.valid) {
       console.log('Visitor Data:', this.visitorForm.value);
       // TODO: Send data to backend
-
-      Swal.fire({
-        toast: true,
-        position: 'top-end',
-        icon: 'success',
-        title: 'Visitor added successfully!',
-        showConfirmButton: false,
-        timer: 2000
-      });
-
-      this.visitorForm.reset();
+      this.visitorService.addVisitor(this.visitorForm.value).subscribe({
+              next: () => {
+                Swal.fire('Success', 'Visitor with visit added successfully', 'success');
+                this.loadHosts();
+                this.visitorForm.reset();
+              },
+              error: (err) => Swal.fire('Error', err.error, 'error'),
+            });
     } else {
       this.visitorForm.markAllAsTouched(); // Show validation errors immediately
       Swal.fire({

@@ -155,9 +155,9 @@ export class ManageDepartments implements OnInit {
           (error) => {
             console.log(error);
             Swal.fire({
-              title: 'Error!',
+              title: 'Info!',
               text: `An unexpected error occurred: ${error.error}`,
-              icon: 'error',
+              icon: 'info',
               confirmButtonText: 'Ok',
             });
           }

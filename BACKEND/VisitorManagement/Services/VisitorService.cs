@@ -43,7 +43,7 @@ namespace VisitorManagement.Services
 
         public async Task<IEnumerable<Visitor>> GetVisitors()
         {
-            return await _context.Visitors.ToListAsync();
+            return await _context.Visitors.Include(v => v.Visits).ToListAsync();
         }
 
         public async Task<string> PutVisitor(int id, VisitorCreateDto visitorDto)
@@ -66,8 +66,13 @@ namespace VisitorManagement.Services
         }
 
 
-        public async Task<Visitor> PostVisitor(VisitorCreateDto visitorDto)
+        public async Task<VisitorCreateDto> PostVisitor(VisitorCreateDto visitorDto)
         {
+            var isVisitorPresent = _context.Visitors.Any(v => v.Email == visitorDto.Email);
+            if (isVisitorPresent)
+            {
+                throw new Exception("Visitor already there in system");
+            }
             var visitor = new Visitor
             {
                 FullName = visitorDto.FullName,
@@ -89,7 +94,7 @@ namespace VisitorManagement.Services
             };
             _context.Visits.Add(visit);
             await _context.SaveChangesAsync();
-            return visitor;
+            return visitorDto;
         }
 
     }
