@@ -61,7 +61,7 @@ namespace VisitorManagement.Controllers
         // PUT: api/Visitor/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutVisitor(int id, VisitorCreateDto visitorDto)
+        public async Task<IActionResult> PutVisitor(int id, VisitCreateDto visitorDto)
         {
             try
             {
@@ -115,7 +115,7 @@ namespace VisitorManagement.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "An unexpected error occurred: " + ex.Message);
+                return StatusCode(500, ex.Message);
             }
         }
     }

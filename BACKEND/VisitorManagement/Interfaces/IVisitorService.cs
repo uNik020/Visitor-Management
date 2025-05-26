@@ -7,7 +7,7 @@ namespace VisitorManagement.Interfaces
     {
         public Task<IEnumerable<Visitor>> GetVisitors();
         public Task<Visitor> GetVisitor(int id);
-        public Task<string> PutVisitor(int id, VisitorCreateDto visitorDto);
+        public Task<string> PutVisitor(int id, VisitCreateDto visitorDto);
         public Task<string> DeleteVisitor(int id);
 
         Task<VisitorCreateDto> PostVisitor(VisitorCreateDto visitorDto);

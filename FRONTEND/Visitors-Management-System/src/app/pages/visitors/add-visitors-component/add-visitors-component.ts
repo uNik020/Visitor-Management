@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import Swal from 'sweetalert2';
 import { HostService } from '../../../services/Host/host.service';
 import { VisitService } from '../../../services/Visits/visit.service';
@@ -17,7 +17,7 @@ export class AddVisitorsComponent {
   visitorForm: FormGroup;
   hosts:any[] = [];
 
-  constructor(private visitorService : VisitorService,private fb: FormBuilder,private hostService: HostService,private cd: ChangeDetectorRef) {
+  constructor(private visitorService : VisitorService,private fb: FormBuilder,private hostService: HostService,private cd: ChangeDetectorRef, private router: Router) {
     this.visitorForm = this.fb.group({
       fullName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
@@ -56,6 +56,7 @@ export class AddVisitorsComponent {
                 Swal.fire('Success', 'Visitor with visit added successfully', 'success');
                 this.loadHosts();
                 this.visitorForm.reset();
+                this.router.navigate(['/admin/visitor-list']);
               },
               error: (err) => Swal.fire('Error', err.error, 'error'),
             });

@@ -23,6 +23,17 @@ namespace VisitorManagement.Services
                 throw new CustomException(404, "visitor not found");
             }
 
+            var visits = await _context.Visits.SingleOrDefaultAsync(v => v.VisitorId == id);
+
+            if (visits.VisitStatus == "Inside")
+            {
+                throw new Exception("Visitor isn't CheckedOut yet.");
+            }
+            if (visits is not null )
+            {
+                _context.Visits.RemoveRange(visits);
+            }
+
             _context.Visitors.Remove(visitor);
             await _context.SaveChangesAsync();
 
@@ -43,26 +54,36 @@ namespace VisitorManagement.Services
 
         public async Task<IEnumerable<Visitor>> GetVisitors()
         {
-            return await _context.Visitors.Include(v => v.Visits).ToListAsync();
+            return await _context.Visitors
+                .Include(v=> v.Visits)
+                .ThenInclude(h=> h.Host)
+                .ToListAsync();
         }
 
-        public async Task<string> PutVisitor(int id, VisitorCreateDto visitorDto)
+        public async Task<string> PutVisitor(int id, VisitCreateDto visitCreateDto)
         {
-            var visitor = await _context.Visitors.FindAsync(id);
-            if (visitor == null)
+            var visit = await _context.Visits.FindAsync(id);
+            if (visit == null)
             {
-                throw new CustomException(404, "Visitor not found");
+                throw new CustomException(404, "Visit not found");
             }
 
-            visitor.FullName = visitorDto.FullName;
-            visitor.PhoneNumber = visitorDto.PhoneNumber;
-            visitor.Email = visitorDto.Email;
-            visitor.Purpose = visitorDto.Purpose;
+            visit.HostId = visitCreateDto.HostId;
+            visit.VisitStatus = visitCreateDto.VisitStatus;
+            if(visitCreateDto.VisitStatus == "Inside")
+            {
+                visit.CheckInTime = DateTime.Now;
+                visit.CheckOutTime = null;
+            }
+            else
+            {
+                visit.CheckOutTime = DateTime.Now;
+            }
 
-            _context.Visitors.Update(visitor);
+            _context.Visits.Update(visit);
             await _context.SaveChangesAsync();
 
-            return "Visitor modified successfully";
+            return "Visit modified successfully";
         }
 
 
@@ -78,6 +99,7 @@ namespace VisitorManagement.Services
                 FullName = visitorDto.FullName,
                 PhoneNumber = visitorDto.PhoneNumber,
                 Email = visitorDto.Email,
+                Address = visitorDto.Address,
                 //PhotoPath = visitorDto.PhotoPath,
                 Purpose = visitorDto.Purpose,
                 CreatedAt = DateTime.UtcNow

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace VisitorManagement.Models;
 
@@ -18,6 +19,7 @@ public partial class Visit
     public string? VisitStatus { get; set; }
 
     public virtual Hosts Host { get; set; } = null!;
-
+    
+    [JsonIgnore]
     public virtual Visitor Visitor { get; set; } = null!;
 }

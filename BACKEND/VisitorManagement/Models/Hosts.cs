@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace VisitorManagement.Models;
 
@@ -17,5 +18,6 @@ public partial class Hosts
 
     public virtual Department? Department { get; set; }
 
+    [JsonIgnore]
     public virtual ICollection<Visit> Visits { get; set; } = new List<Visit>();
 }
