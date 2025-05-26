@@ -17,5 +17,7 @@ public partial class Hosts
 
     public virtual Department? Department { get; set; }
 
+    public ICollection<Visitor> Visitors { get; set; } = new List<Visitor>();
+
     public virtual ICollection<Visit> Visits { get; set; } = new List<Visit>();
 }
