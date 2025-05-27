@@ -8,11 +8,13 @@ import { VisitorList } from './pages/visitors/visitor-list/visitor-list';
 import { ManageHosts } from './pages/hosts/manage-hosts/manage-hosts';
 import { ManageDepartments } from './pages/manage-departments/manage-departments';
 import { RouteGuardService } from './services/RouteGuard/route-guard-service';
+import { ForgotPassword } from './pages/forgot-password/forgot-password/forgot-password';
 
 export const routes: Routes = [
   { path: '', component: Login },
   { path: 'login', component: Login },
   { path: 'register', component: Register },
+  { path: 'forgot-password', component: ForgotPassword },
   
   {
     path: 'admin',

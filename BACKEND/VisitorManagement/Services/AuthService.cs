@@ -43,7 +43,15 @@ namespace VisitorManagement.Services
             var rowsToRemove = await _context.PasswordResetRequests.Where(p => p.Email == forgotPasswordRequest.Email).ToListAsync();
             _context.PasswordResetRequests.RemoveRange(rowsToRemove);
             _context.PasswordResetRequests.Add(resetRequest);
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Database save failed: " + ex.InnerException?.Message ?? ex.Message);
+            }
+
 
             // TODO: Send the code via email
             string subject = "Your Password Reset Code";
@@ -56,7 +64,7 @@ namespace VisitorManagement.Services
                                     <p>This code will expire in 10 minutes.</p>
                                     <p>If you didn’t request a reset, please ignore this email.</p>
                                     <br/>
-                                    <p>Thanks,<br/>TickSync Team</p>
+                                    <p>Thanks,<br/>InOutly Team</p>
                                 </body>
                             </html>";
             await _emailService.SendEmail(forgotPasswordRequest.Email, subject, body);

@@ -77,14 +77,24 @@ button:disabled {
 
 .register-link a {
   color: #000;
-  text-decoration: underline;
   transition: color 0.2s;
+  text-decoration: none;
 }
 
 .register-link a:hover {
-  color: #555;
+  color: #2b2bf6;
 }
 
+.forgot-password-link{
+  text-align: end;
+  text-decoration: none;
+}
+
+.forgot-password-link a{
+  text-align: end;
+  text-decoration: none;
+  font-size: 15px;
+}
 .password-wrapper {
   display: flex;
   align-items: center;

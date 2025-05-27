@@ -18,9 +18,23 @@ export class AuthService {
   public loginAdmin(adminLogin : any ){
     return this.httpClient.post(`${baseurl}/Auth/login`,adminLogin);
   }
-    //forget password
-  public forgetPassword(forgotPass : any ){
-    return this.httpClient.post(`${baseurl}/Auth/forgotpassword`,forgotPass);
+   // Forgot password - Send OTP
+  public sendResetCode(emailObj: { email: string }) {
+    return this.httpClient.post(`${baseurl}/Auth/forgot-password`, emailObj,{responseType:'text'});
   }
 
+  // Verify OTP
+  public verifyResetCode(payload: { email: string; secretCode: string }) {
+    return this.httpClient.post(`${baseurl}/Auth/verify-reset-code`, payload);
+  }
+
+  // Reset Password
+  public resetPassword(payload: {
+    email: string;
+    secretCode: string;
+    newPassword: string;
+    confirmPassword: string;
+  }) {
+    return this.httpClient.post(`${baseurl}/Auth/reset-password`, payload);
+  }
 }
