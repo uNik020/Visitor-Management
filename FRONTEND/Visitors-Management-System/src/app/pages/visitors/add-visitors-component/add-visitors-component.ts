@@ -4,7 +4,6 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router, RouterModule } from '@angular/router';
 import Swal from 'sweetalert2';
 import { HostService } from '../../../services/Host/host.service';
-import { VisitService } from '../../../services/Visits/visit.service';
 import { VisitorService } from '../../../services/Visitor/visitor.service';
 
 @Component({

@@ -1,7 +1,8 @@
 <div class="dashboard-container">
   <h1 class="title">Admin Dashboard</h1>
 
-  <div class="cards">
+  <!-- Summary Cards -->
+  <div class="cards" *ngIf="summary?.length > 0">
     <div class="card" *ngFor="let item of summary">
       <div class="icon">{{ item.icon }}</div>
       <div class="info">
@@ -13,12 +14,14 @@
 
   <div class="recent-section">
     <h2>Recent Visitors</h2>
-    <div class="table-wrapper">
+
+    <!-- Visitors Table -->
+    <div class="table-wrapper" *ngIf="recentVisitors">
       <table>
         <thead>
           <tr>
             <th>Name</th>
-            <th>Time</th>
+            <th>Checkedin Time</th>
             <th>Host</th>
             <th>Status</th>
           </tr>
@@ -34,10 +37,15 @@
       </table>
     </div>
 
+    <!-- Fallback Message -->
+    <ng-template #noVisitors>
+      <p>No recent visitors found.</p>
+    </ng-template>
+
+    <!-- Action Buttons -->
     <div class="actions">
       <button routerLink="/admin/add-visitor">Add Visitor</button>
       <button routerLink="/admin/visitor-list">Manage Visitors</button>
-      <!-- <button>Export Data</button> -->
     </div>
   </div>
 </div>

@@ -78,6 +78,11 @@ button.edit {
   color: white;
 }
 
+button.edit:hover {
+  background-color: #005ab9;
+  color: white;
+}
+
 button.delete {
   background-color: #dc3545;
   color: white;

@@ -64,11 +64,13 @@ h2 {
 }
 
 .edit-btn {
-  background-color: #f0c14b;
+ background-color: #007bff;
+ color: white;
 }
 
 .edit-btn:hover {
-  background-color: #e2b236;
+  background-color: #005ab9;
+  color: white;
 }
 
 .delete-btn {
