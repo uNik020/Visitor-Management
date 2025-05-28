@@ -24,10 +24,6 @@ export class VisitorList {
     private hostService: HostService
   ) {}
 
-visitors1 = [
-    { name: 'John Doe', email: 'john@example.com', host: 'Alice', status: 'Inside' },
-    { name: 'Jane Smith', email: 'jane@example.com', host: 'Bob', status: 'Checked Out' }
-  ];
 
   ngOnInit(): void {
       this.loadVisitors();
@@ -50,8 +46,9 @@ visitors1 = [
   editingVisitor: any = null;
 
   get filteredVisitors() {
+    console.log("inside search");
     return this.visitors.filter(visitor =>
-      visitor.name.toLowerCase().includes(this.searchQuery.toLowerCase())
+      visitor.fullName.toLowerCase().includes(this.searchQuery.toLowerCase())
     );
   }
 

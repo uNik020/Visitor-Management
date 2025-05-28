@@ -31,8 +31,8 @@
         </tr>
       </thead>
       <tbody>
-        <!-- <tr *ngFor="let visitor of filteredVisitors"> -->
-        <tr *ngFor="let visitor of visitors">
+        <!-- <tr *ngFor="let visitor of visitors"> -->
+          <tr *ngFor="let visitor of filteredVisitors">
           <td>{{ visitor.fullName }}</td>
           <td>{{ visitor.email }}</td>
           <td>{{ visitor.purpose }}</td>
@@ -45,7 +45,6 @@
           </td>
 
           <td class="actions">
-            <!-- <button class="btn-view" (click)="onView(visitor)">View</button> -->
             <button class="btn-edit" (click)="onEdit(visitor)">Edit</button>
             <button class="btn-delete" (click)="onDelete(visitor.visitorId)">
               Delete
