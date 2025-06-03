@@ -44,8 +44,19 @@
   </div>
 </div>
 
-  <div class="table-wrapper" *ngIf="visitors.length>0">
-    <table>
+  <div class="table-wrapper" *ngIf="rowData.length>0">
+    <ag-grid-angular
+    class="ag-theme-alpine"
+    style="width: 100%; height: 500px;"
+    [rowData]="filteredVisitors"
+    [columnDefs]="columnDefs"
+    [defaultColDef]="defaultColDef"
+    (cellClicked)="onGridCellClicked($event)"
+    [pagination]="true"
+    [paginationPageSize]="10"
+    [animateRows]="true"
+  >
+    <!-- <table>
       <thead>
         <tr>
           <th>Name</th>
@@ -59,7 +70,7 @@
         </tr>
       </thead>
       <tbody>
-        <!-- <tr *ngFor="let visitor of visitors"> -->
+        
           <tr *ngFor="let visitor of filteredVisitors">
           <td>{{ visitor.fullName }}</td>
           <td>{{ visitor.email }}</td>
@@ -80,7 +91,8 @@
           </td>
         </tr>
       </tbody>
-    </table>
+    </table> -->
+    </ag-grid-angular>
   </div>
 
   <!-- Edit Popup Modal -->

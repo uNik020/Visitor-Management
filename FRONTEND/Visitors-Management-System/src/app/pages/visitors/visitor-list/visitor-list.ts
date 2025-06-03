@@ -1,14 +1,19 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component } from '@angular/core';
-import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { VisitorService } from '../../../services/Visitor/visitor.service';
 import Swal from 'sweetalert2';
 import { HostService } from '../../../services/Host/host.service';
+import { AgGridModule } from 'ag-grid-angular';
+import { ModuleRegistry } from 'ag-grid-community';
+import { AllCommunityModule } from 'ag-grid-community';
+
+ModuleRegistry.registerModules([AllCommunityModule]);
 
 @Component({
   selector: 'app-visitor-list',
-  imports: [RouterModule, CommonModule, FormsModule],
+  imports: [RouterModule,FormsModule, CommonModule, AgGridModule],
   templateUrl: './visitor-list.html',
   styleUrl: './visitor-list.css'
 })
@@ -25,9 +30,60 @@ export class VisitorList {
 filterStatus = '';
 filterHostId = '';
 
+columnDefs = [
+  { headerName: 'Name', field: 'fullName' },
+  { headerName: 'Email', field: 'email' },
+  { headerName: 'Purpose', field: 'purpose' },
+  {
+    headerName: 'Host',
+    valueGetter: (params:any) => params.data.visits?.[0]?.host?.fullName || 'N/A'
+  },
+  {
+    headerName: 'Status',
+    valueGetter: (params:any) => params.data.visits?.[0]?.visitStatus || 'N/A'
+  },
+  {
+    headerName: 'Checkin At',
+    valueGetter: (params:any) =>
+      params.data.visits?.[0]?.checkInTime
+        ? new Date(params.data.visits[0].checkInTime).toLocaleString()
+        : 'N/A'
+  },
+  {
+    headerName: 'Checkout At',
+    valueGetter: (params:any) =>
+      params.data.visits?.[0]?.checkOutTime
+        ? new Date(params.data.visits[0].checkOutTime).toLocaleString()
+        : 'Yet to checkout'
+  },
+  {
+    headerName: 'Actions',
+    cellRenderer: (params:any) => {
+      return `
+        <button style="margin-right: 5px; padding: 4px 8px; background-color: #0d6efd; color: white; border: none; border-radius: 4px; cursor: pointer;">
+        Edit
+      </button>
+      <button style="padding: 4px 8px; background-color: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;">
+        Delete
+      </button>
+      `;
+    }
+  }
+];
+
+
+defaultColDef = {
+  sortable: true,
+  filter: true,
+  resizable: true
+};
+
+
+rowData: any[] = [];
+
+
 
   constructor(
-    private fb: FormBuilder,
     private cd: ChangeDetectorRef,
     private visitorService: VisitorService,
     private hostService: HostService
@@ -38,35 +94,58 @@ filterHostId = '';
       this.loadVisitors();
       this.loadHosts();
     }
-  
-    loadVisitors() {
-      this.visitorService.getVisitor().subscribe(
-        (data: any) => {
-          setTimeout(() => {
-            this.visitors = [...data];
-            this.cd.detectChanges();
-          },500);
-        },
-        (err) => Swal.fire('Error', err.message, 'error')
-      );
+
+    onActionClicked(params: any) {
+  const action = params.event?.target?.getAttribute('data-action');
+  if (action === 'edit') {
+    this.onEdit(params.data);
+  } else if (action === 'delete') {
+    this.onDelete(params.data.visitorId);
+  }
+}
+
+onGridCellClicked(event: any): void {
+  if (event.colDef.headerName === 'Actions') {
+    const clickedButton = event.event.target as HTMLElement;
+    if (clickedButton.classList.contains('btn-edit')) {
+      this.onEdit(event.data);
+    } else if (clickedButton.classList.contains('btn-delete')) {
+      this.onDelete(event.data.visitorId);
     }
+  }
+}
 
-
-  // get filteredVisitors() {
-  //   console.log("inside search");
-  //   return this.visitors.filter(visitor =>
-  //     visitor.fullName.toLowerCase().includes(this.searchQuery.toLowerCase())
-  //   );
-  // }
+  
+ loadVisitors() {
+  this.visitorService.getVisitor().subscribe(
+    (data: any) => {
+      setTimeout(() => {
+        this.rowData = [...data]; // ✅ changed
+        this.cd.detectChanges();
+      }, 500);
+    },
+    (err) => Swal.fire('Error', err.message, 'error')
+  );
+}
 
   get filteredVisitors() {
-  return this.visitors.filter(visitor => {
-    const matchesName = visitor.fullName.toLowerCase().includes(this.searchQuery.toLowerCase());
-    const matchesStatus = this.filterStatus ? visitor.visits[0].visitStatus === this.filterStatus : true;
-    const matchesHost = this.filterHostId ? visitor.visits[0].hostId === +this.filterHostId : true;
-    return matchesName && matchesStatus && matchesHost;
+  return this.rowData.filter((visitor) => {
+    const nameMatch = visitor.fullName
+      .toLowerCase()
+      .includes(this.searchQuery.toLowerCase());
+
+    const statusMatch = this.filterStatus
+      ? visitor.visits[0]?.visitStatus === this.filterStatus
+      : true;
+
+    const hostMatch = this.filterHostId
+      ? visitor.visits[0]?.hostId == this.filterHostId
+      : true;
+
+    return nameMatch && statusMatch && hostMatch;
   });
 }
+
 
 
   onEdit(visitor: any) {
@@ -158,8 +237,5 @@ filterHostId = '';
   this.filterHostId = '';
   this.showFilterModal = false;
 }
-
-    
-
 
 }
