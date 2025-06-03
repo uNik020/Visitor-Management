@@ -16,6 +16,15 @@ import { HostService } from '../../../services/Host/host.service';
 export class VisitorList {
   visitors: any[] = [];
   hosts: any[] = [];
+  
+  searchQuery = '';
+  editingVisitor: any = null;
+
+  sortAscending = true;
+  showFilterModal = false;
+filterStatus = '';
+filterHostId = '';
+
 
   constructor(
     private fb: FormBuilder,
@@ -42,15 +51,23 @@ export class VisitorList {
       );
     }
 
-  searchQuery = '';
-  editingVisitor: any = null;
+
+  // get filteredVisitors() {
+  //   console.log("inside search");
+  //   return this.visitors.filter(visitor =>
+  //     visitor.fullName.toLowerCase().includes(this.searchQuery.toLowerCase())
+  //   );
+  // }
 
   get filteredVisitors() {
-    console.log("inside search");
-    return this.visitors.filter(visitor =>
-      visitor.fullName.toLowerCase().includes(this.searchQuery.toLowerCase())
-    );
-  }
+  return this.visitors.filter(visitor => {
+    const matchesName = visitor.fullName.toLowerCase().includes(this.searchQuery.toLowerCase());
+    const matchesStatus = this.filterStatus ? visitor.visits[0].visitStatus === this.filterStatus : true;
+    const matchesHost = this.filterHostId ? visitor.visits[0].hostId === +this.filterHostId : true;
+    return matchesName && matchesStatus && matchesHost;
+  });
+}
+
 
   onEdit(visitor: any) {
     this.editingVisitor = { ...visitor }; // clone to avoid live editing
@@ -116,6 +133,33 @@ export class VisitorList {
         (err) => Swal.fire('Error', err.message, 'error')
       );
     }
+
+    toggleSort(){
+      this.sortAscending = !this.sortAscending;
+      this.visitors.sort((a,b)=>{
+        const nameA=a.fullName.toLowerCase();
+        const nameB=b.fullName.toLowerCase();
+
+        if(this.sortAscending){
+          return nameA.localeCompare(nameB);
+        }
+        else{
+          return nameB.localeCompare(nameA)
+        }
+      });
+    }
+
+    toggleFilterModal() {
+  this.showFilterModal = !this.showFilterModal;
+}
+
+    clearFilters() {
+  this.filterStatus = '';
+  this.filterHostId = '';
+  this.showFilterModal = false;
+}
+
+    
 
 
 }

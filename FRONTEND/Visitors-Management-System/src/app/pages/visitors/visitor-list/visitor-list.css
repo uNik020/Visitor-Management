@@ -195,6 +195,25 @@ td {
   background: #999;
 }
 
+.filter-modal{
+  padding: 20px;
+  margin: auto;
+  border-style: solid;
+  border-color: #000;
+}
+
+.filter-modal-content select{
+  padding:10px;
+  margin: 10px;
+}
+
+.filter-modal-content button{
+  padding:10px;
+  background: #000;
+  color: white;
+  border-radius: 10%;
+}
+
 @media (max-width: 500px) {
   .modal-actions {
     flex-direction: column;

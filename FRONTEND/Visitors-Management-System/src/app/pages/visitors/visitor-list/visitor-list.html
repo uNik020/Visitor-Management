@@ -8,13 +8,41 @@
       [(ngModel)]="searchQuery"
     />
 
-    <button class="icon-btn" title="Sort">
+    <button class="icon-btn" title="Sort" (click)="toggleSort()">
       <i class="fas fa-sort"></i>
     </button>
-    <button class="icon-btn" title="Filter">
+    <button class="icon-btn" title="Filter" (click)="toggleFilterModal()">
       <i class="fas fa-filter"></i>
     </button>
   </div>
+
+    <div class="filter-modal" *ngIf="showFilterModal">
+  <div class="filter-modal-content">
+    <h3>Filter Visitors</h3>
+
+    <label>
+      Status:
+      <select [(ngModel)]="filterStatus" name="filterStatus">
+        <option value="">All</option>
+        <option value="Inside">Inside</option>
+        <option value="Checked Out">Checked Out</option>
+      </select>
+    </label>
+
+    <label>
+      Host:
+      <select [(ngModel)]="filterHostId" name="filterHostId">
+        <option value="">All</option>
+        <option *ngFor="let host of hosts" [value]="host.hostId">{{ host.fullName }}</option>
+      </select>
+    </label>
+
+    <div class="modal-actions">
+      <button class="btn-apply" (click)="toggleFilterModal()">Apply</button>
+      <button class="btn-clear" (click)="clearFilters()">Clear</button>
+    </div>
+  </div>
+</div>
 
   <div class="table-wrapper" *ngIf="visitors.length>0">
     <table>
@@ -116,4 +144,6 @@
       </form>
     </div>
   </div>
+
+
 </div>
