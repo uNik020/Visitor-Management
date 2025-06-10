@@ -1,7 +1,8 @@
 ﻿namespace VisitorManagement.DTO
 {
-    public class VisitorCreateDto
+    public class VisitorReadDto
     {
+        public int VisitorId { get; set; }
         public string FullName { get; set; } = null!;
         public string? PhoneNumber { get; set; }
         public string? Email { get; set; }
@@ -15,11 +16,14 @@
         public string? IdProofNumber { get; set; }
         public string? LicensePlateNumber { get; set; }
 
+        public string? PassCode { get; set; }
+        public string? QrCodeData { get; set; }
+
         public string? PhotoUrl { get; set; }
 
-        public bool IsPreRegistered { get; set; } = false;
+        public bool IsPreRegistered { get; set; }
         public DateTime? ExpectedVisitDateTime { get; set; }
 
-        public int HostId { get; set; } // Required only if mapping visitor to a host in Visits table
+        public DateTime CreatedAt { get; set; }
     }
 }

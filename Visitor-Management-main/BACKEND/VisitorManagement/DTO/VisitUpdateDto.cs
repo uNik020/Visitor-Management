@@ -1,16 +1,12 @@
 ﻿namespace VisitorManagement.DTO
 {
-    public class VisitCreateDto
+    public class VisitUpdateDto
     {
-        public int VisitorId { get; set; }
-        public int HostId { get; set; }
-
+        public string? VisitStatus { get; set; }
         public DateTime? CheckInTime { get; set; }
         public DateTime? CheckOutTime { get; set; }
 
-        public string? VisitStatus { get; set; } // Scheduled, etc.
-
-        public bool IsApproved { get; set; } = false;
+        public bool? IsApproved { get; set; }
         public string? ApprovalComment { get; set; }
 
         public string? GatePassNumber { get; set; }
