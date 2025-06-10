@@ -1,0 +1,32 @@
+<div class="manage-dept-container">
+  <h2>Manage Departments</h2>
+
+  <form [formGroup]="departmentForm" (ngSubmit)="onSubmit()" class="dept-form">
+    <input type="text" formControlName="departmentName" placeholder="Enter Department Name" />
+    <button type="submit">
+      {{ isEditMode ? 'Update Department' : 'Add Department' }}
+    </button>
+  </form>
+
+  <div class="dept-list">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Department Name</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let dept of departments">
+          <td>{{ dept.departmentId }}</td>
+          <td>{{ dept.departmentName }}</td>
+          <td>
+            <button class="edit-btn" (click)="onEdit(dept)">Edit</button>
+            <button class="delete-btn" (click)="onDelete(dept.departmentId)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,87 @@
+<div class="form-container">
+  <h2>Add Visitor</h2>
+  <form [formGroup]="visitorForm" (ngSubmit)="onSubmit()">
+    <div class="form-grid">
+      <label
+        >Full Name
+        <input type="text" formControlName="fullName" />
+        <div
+          class="error"
+          *ngIf="visitorForm.get('fullName')?.touched && visitorForm.get('fullName')?.invalid"
+        >
+          Full Name is required.
+        </div>
+      </label>
+
+      <label
+        >Email
+        <input type="email" formControlName="email" />
+        <div
+          class="error"
+          *ngIf="visitorForm.get('email')?.touched && visitorForm.get('email')?.invalid"
+        >
+          Valid email is required.
+        </div>
+      </label>
+
+      <label
+        >Contact Number
+        <input type="text" formControlName="phoneNumber" />
+        <div
+          class="error"
+          *ngIf="visitorForm.get('phoneNumber')?.touched && visitorForm.get('phoneNumber')?.invalid"
+        >
+          Enter a valid 10-digit phone number.
+        </div>
+      </label>
+
+      <label
+        >Address (Optional)
+        <textarea formControlName="address"></textarea>
+      </label>
+
+      <label
+        >Visit Purpose
+        <input type="text" formControlName="purpose" />
+        <div
+          class="error"
+          *ngIf="visitorForm.get('purpose')?.touched && visitorForm.get('purpose')?.invalid"
+        >
+          Visit Purpose is required.
+        </div>
+      </label>
+
+      <label>Host Name
+        <select formControlName="hostId">
+          <option value="" disabled>Select Host</option>
+
+          <option *ngFor="let host of hosts" [value]="host.hostId">
+            {{ host.fullName }}
+          </option>
+        </select>
+        <div
+          class="error"
+          *ngIf="visitorForm.get('hostName')?.touched && visitorForm.get('hostName')?.invalid"
+        >
+          Host Name is required.
+        </div>
+      </label>
+
+      <!-- <label>Check-In Date
+        <input type="date" formControlName="checkInDate" />
+        <div class="error" *ngIf="visitorForm.get('checkInDate')?.touched && visitorForm.get('checkInDate')?.invalid">
+          Check-In Date is required.
+        </div>
+      </label>
+
+      <label>Check-In Time
+        <input type="time" formControlName="checkInTime" />
+        <div class="error" *ngIf="visitorForm.get('checkInTime')?.touched && visitorForm.get('checkInTime')?.invalid">
+          Check-In Time is required.
+        </div>
+      </label> -->
+    </div>
+
+    <button type="submit" [disabled]="visitorForm.invalid">Add Visitor</button>
+  </form>
+</div>

@@ -1,0 +1,99 @@
+.dashboard-container {
+  padding: 2rem;
+  background: #f8f8f8;
+  min-height: 90vh;
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 2rem;
+  color: #000;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.card {
+  background-color: #fff;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+.icon {
+  font-size: 2rem;
+}
+
+.info h3 {
+  margin: 0;
+  color: #111;
+}
+
+.info p {
+  font-size: 1.4rem;
+  font-weight: bold;
+}
+
+.recent-section h2 {
+  margin-bottom: 1rem;
+  color: #000;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 500px;
+}
+
+th, td {
+  padding: 0.9rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+th {
+  background-color: #f0f0f0;
+  font-weight: 600;
+}
+
+.actions {
+  margin-top: 1.5rem;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+button {
+  padding: 0.8rem 1.2rem;
+  border: none;
+  background-color: #000;
+  color: white;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+button:hover {
+  background-color: #333;
+  transform: scale(1.04);
+}
