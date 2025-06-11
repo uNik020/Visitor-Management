@@ -39,5 +39,5 @@ public partial class Visitor
 
     // Relationships
     public virtual ICollection<Visit> Visits { get; set; } = new List<Visit>();
-    public virtual ICollection<Companion> Companions { get; set; } = new List<Companion>();
+    public ICollection<Companion> Companions { get; set; } = new List<Companion>();
 }

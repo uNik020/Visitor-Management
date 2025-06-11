@@ -134,16 +134,19 @@ namespace VisitorManagement.Services
             // Create Companion records if provided
             if (dto.Companions != null && dto.Companions.Any())
             {
-                foreach (var name in dto.Companions)
+                foreach (var companionDto in dto.Companions)
                 {
                     _context.Companions.Add(new Companion
                     {
-                        FullName = name,
+                        FullName = companionDto.FullName,
+                        ContactNumber = companionDto.ContactNumber,
+                        Email = companionDto.Email,
                         VisitorId = visitor.VisitorId
                     });
                 }
                 await _context.SaveChangesAsync();
             }
+
 
             // Create Visit record
             var visit = new Visit
