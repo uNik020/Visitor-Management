@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using VisitorManagement.DTO;
 using VisitorManagement.Interfaces;
 using VisitorManagement.Models;
@@ -26,7 +27,7 @@ namespace VisitorManagement.Controllers
 
         // GET: api/Visits/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<VisitDto>> GetVisit(int id)
+        public async Task<ActionResult<VisitReadDto>> GetVisit(int id)
         {
             var visit = await _visitService.GetVisitByIdAsync(id);
             if (visit == null)
@@ -52,14 +53,9 @@ namespace VisitorManagement.Controllers
 
         // PUT: api/Visits/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutVisit(int id, VisitCreateDto visit)
+        public async Task<IActionResult> PutVisit(int id, VisitUpdateDto visitDto)
         {
-            if (id != visit.VisitId)
-            {
-                return BadRequest("Visit ID mismatch");
-            }
-
-            var success = await _visitService.UpdateVisitAsync(visit);
+            var success = await _visitService.UpdateVisitAsync(visitDto, id);
             if (!success)
             {
                 return NotFound("Visit not found or update failed");
@@ -67,6 +63,7 @@ namespace VisitorManagement.Controllers
 
             return Ok("Visit updated successfully");
         }
+
 
         // DELETE: api/Visits/5
         [HttpDelete("{id}")]
@@ -80,5 +77,6 @@ namespace VisitorManagement.Controllers
 
             return Ok("Visit deleted successfully");
         }
+
     }
 }

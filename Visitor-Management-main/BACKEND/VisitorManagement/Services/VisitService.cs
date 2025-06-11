@@ -33,7 +33,7 @@ namespace VisitorManagement.Services
                 }).ToListAsync();
         }
 
-        public async Task<VisitDto> GetVisitByIdAsync(int id)
+        public async Task<VisitReadDto> GetVisitByIdAsync(int id)
         {
             var visit = await _context.Visits
                 .Include(v => v.Visitor)
@@ -43,12 +43,13 @@ namespace VisitorManagement.Services
 
             if (visit == null) return null;
 
-            return new VisitDto
+            return new VisitReadDto
             {
                 VisitId = visit.VisitId,
                 VisitorName = visit.Visitor.FullName,
                 HostName = visit.Host.FullName,
                 VisitStatus = visit.VisitStatus,
+                QrCodeData = visit.QrCodeData,
                 Department = visit.Host.Department.DepartmentName,
                 CheckInTime = visit.CheckInTime ?? DateTime.MinValue,
                 CheckOutTime = visit.CheckOutTime ?? DateTime.MinValue
@@ -63,7 +64,11 @@ namespace VisitorManagement.Services
                 HostId = visitDto.HostId,
                 CheckInTime = visitDto.CheckInTime ?? DateTime.UtcNow,
                 CheckOutTime = visitDto.CheckOutTime,
-                VisitStatus = visitDto.VisitStatus
+                VisitStatus = visitDto.VisitStatus,
+                IsApproved = visitDto.IsApproved,
+                ApprovalComment = visitDto.ApprovalComment,
+                GatePassNumber = visitDto.GatePassNumber,
+                QrCodeData = visitDto.QrCodeData
             };
 
             _context.Visits.Add(visit);
@@ -71,19 +76,24 @@ namespace VisitorManagement.Services
         }
 
 
-        public async Task<bool> UpdateVisitAsync(VisitCreateDto visitDto)
-        {
-            var visit = await _context.Visits.SingleOrDefaultAsync(v => v.VisitId == visitDto.VisitId);
 
-            visit.VisitId = visitDto.VisitId;
-            visit.VisitorId = visitDto.VisitorId;
-            visit.HostId = visitDto.HostId;
-            visit.VisitStatus = visitDto.VisitStatus;
-                
-           
+        public async Task<bool> UpdateVisitAsync(VisitUpdateDto visitDto, int id)
+        {
+            var visit = await _context.Visits.FindAsync(id);
+            if (visit == null) return false;
+
+            visit.VisitStatus = visitDto.VisitStatus ?? visit.VisitStatus;
+            visit.CheckInTime = visitDto.CheckInTime ?? visit.CheckInTime;
+            visit.CheckOutTime = visitDto.CheckOutTime ?? visit.CheckOutTime;
+            visit.IsApproved = visitDto.IsApproved ?? visit.IsApproved;
+            visit.ApprovalComment = visitDto.ApprovalComment ?? visit.ApprovalComment;
+            visit.GatePassNumber = visitDto.GatePassNumber ?? visit.GatePassNumber;
+            visit.QrCodeData = visitDto.QrCodeData ?? visit.QrCodeData;
+
             _context.Visits.Update(visit);
             return await _context.SaveChangesAsync() > 0;
         }
+
 
         public async Task<bool> DeleteVisitAsync(int id)
         {
