@@ -5,11 +5,10 @@ namespace VisitorManagement.Services
 {
     public interface IHostService
     {
-        public Task<IEnumerable<Hosts>> GetHosts();
-        public Task<Hosts> GetHost(int id);
-        public Task<string> PutHost(int id, HostCreateDto hostDto);
-        public Task<string> DeleteHost(int id);
+        Task<IEnumerable<Hosts>> GetHosts();
+        Task<Hosts> GetHost(int id);
+        Task<string> PutHost(int id, HostCreateDto hostDto);
+        Task<string> DeleteHost(int id);
         Task<Hosts> PostHost(HostCreateDto hostDto);
-
     }
 }

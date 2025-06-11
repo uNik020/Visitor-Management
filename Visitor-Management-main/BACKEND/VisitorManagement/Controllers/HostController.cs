@@ -21,12 +21,26 @@ namespace VisitorManagement.Controllers
 
         // GET: api/Host
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<myHosts>>> GetHosts()
+        public async Task<ActionResult<IEnumerable<HostReadDto>>> GetHosts()
         {
             try
             {
-                var users = await _hostService.GetHosts();
-                return Ok(users);
+                var hosts = await _hostService.GetHosts();
+                var hostDtos = hosts.Select(h => new HostReadDto
+                {
+                    HostId = h.HostId,
+                    FullName = h.FullName,
+                    Email = h.Email,
+                    PhoneNumber = h.PhoneNumber,
+                    DepartmentId = h.DepartmentId,
+                    DepartmentName = h.Department?.DepartmentName,
+                    DesignationId = h.DesignationId,
+                    DesignationName = h.Designation?.DesignationName,
+                    ProfilePictureUrl = h.ProfilePictureUrl,
+                    About = h.About
+                });
+
+                return Ok(hostDtos);
             }
             catch (Exception ex)
             {
@@ -34,13 +48,28 @@ namespace VisitorManagement.Controllers
             }
         }
 
-        // GET: api/Host/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<myHosts>> GetHost(int id)
+        public async Task<ActionResult<HostReadDto>> GetHost(int id)
         {
             try
             {
-                return await _hostService.GetHost(id);
+                var h = await _hostService.GetHost(id);
+
+                var dto = new HostReadDto
+                {
+                    HostId = h.HostId,
+                    FullName = h.FullName,
+                    Email = h.Email,
+                    PhoneNumber = h.PhoneNumber,
+                    DepartmentId = h.DepartmentId,
+                    DepartmentName = h.Department?.DepartmentName,
+                    DesignationId = h.DesignationId,
+                    DesignationName = h.Designation?.DesignationName,
+                    ProfilePictureUrl = h.ProfilePictureUrl,
+                    About = h.About
+                };
+
+                return Ok(dto);
             }
             catch (CustomException ex)
             {
@@ -51,6 +80,7 @@ namespace VisitorManagement.Controllers
                 return StatusCode(500, "An unexpected error occurred: " + ex.Message);
             }
         }
+
 
         // PUT: api/Host/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

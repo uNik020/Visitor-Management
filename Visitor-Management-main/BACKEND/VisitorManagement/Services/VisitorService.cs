@@ -15,109 +15,146 @@ namespace VisitorManagement.Services
             _context = context;
         }
 
-        public async Task<string> DeleteVisitor(int id)
+        public async Task<IEnumerable<VisitorReadDto>> GetVisitors()
         {
-            var visitor = await _context.Visitors.FindAsync(id);
-            if (visitor == null)
-            {
-                throw new CustomException(404, "visitor not found");
-            }
-
-            var visits = await _context.Visits.SingleOrDefaultAsync(v => v.VisitorId == id);
-
-            if (visits.VisitStatus == "Inside")
-            {
-                throw new Exception("Visitor isn't CheckedOut yet.");
-            }
-            if (visits is not null )
-            {
-                _context.Visits.RemoveRange(visits);
-            }
-
-            _context.Visitors.Remove(visitor);
-            await _context.SaveChangesAsync();
-
-            return "visitor deleted successfully";
-        }
-
-        public async Task<Visitor> GetVisitor(int id)
-        {
-            var visitor = await _context.Visitors.FindAsync(id);
-
-            if (visitor == null)
-            {
-                throw new CustomException(404,"visitor not found");
-            }
-
-            return visitor;
-        }
-
-        public async Task<IEnumerable<Visitor>> GetVisitors()
-        {
-            return await _context.Visitors
-                .Include(v=> v.Visits)
-                .ThenInclude(h=> h.Host)
+            var visitors = await _context.Visitors
+                .Include(v => v.Visits)
+                .ThenInclude(v => v.Host)
                 .ToListAsync();
+
+            return visitors.Select(v => new VisitorReadDto
+            {
+                VisitorId = v.VisitorId,
+                FullName = v.FullName,
+                PhoneNumber = v.PhoneNumber,
+                Email = v.Email,
+                Address = v.Address,
+                CompanyName = v.CompanyName,
+                Purpose = v.Purpose,
+                Comment = v.Comment,
+                IdProofType = v.IdProofType,
+                IdProofNumber = v.IdProofNumber,
+                LicensePlateNumber = v.LicensePlateNumber,
+                PassCode = v.PassCode,
+                QrCodeData = v.QrCodeData,
+                PhotoUrl = v.PhotoUrl,
+                IsPreRegistered = v.IsPreRegistered,
+                ExpectedVisitDateTime = v.ExpectedVisitDateTime,
+                CreatedAt = v.CreatedAt
+            });
         }
 
-        public async Task<string> PutVisitor(int id, VisitCreateDto visitCreateDto)
+        public async Task<VisitorReadDto> GetVisitor(int id)
         {
-            var visit = await _context.Visits.FindAsync(id);
-            if (visit == null)
-            {
-                throw new CustomException(404, "Visit not found");
-            }
+            var visitor = await _context.Visitors.FindAsync(id);
+            if (visitor == null)
+                throw new CustomException(404, "Visitor not found");
 
-            visit.HostId = visitCreateDto.HostId;
-            visit.VisitStatus = visitCreateDto.VisitStatus;
-            if(visitCreateDto.VisitStatus == "Inside")
+            return new VisitorReadDto
             {
-                visit.CheckInTime = DateTime.Now;
-                visit.CheckOutTime = null;
-            }
-            else
-            {
-                visit.CheckOutTime = DateTime.Now;
-            }
-
-            _context.Visits.Update(visit);
-            await _context.SaveChangesAsync();
-
-            return "Visit modified successfully";
+                VisitorId = visitor.VisitorId,
+                FullName = visitor.FullName,
+                PhoneNumber = visitor.PhoneNumber,
+                Email = visitor.Email,
+                Address = visitor.Address,
+                CompanyName = visitor.CompanyName,
+                Purpose = visitor.Purpose,
+                Comment = visitor.Comment,
+                IdProofType = visitor.IdProofType,
+                IdProofNumber = visitor.IdProofNumber,
+                LicensePlateNumber = visitor.LicensePlateNumber,
+                PassCode = visitor.PassCode,
+                QrCodeData = visitor.QrCodeData,
+                PhotoUrl = visitor.PhotoUrl,
+                IsPreRegistered = visitor.IsPreRegistered,
+                ExpectedVisitDateTime = visitor.ExpectedVisitDateTime,
+                CreatedAt = visitor.CreatedAt
+            };
         }
 
-
-        public async Task<VisitorCreateDto> PostVisitor(VisitorCreateDto visitorDto)
+        public async Task<VisitorReadDto> PostVisitor(VisitorCreateDto dto)
         {
-            var isVisitorPresent = _context.Visitors.Any(v => v.Email == visitorDto.Email);
-            if (isVisitorPresent)
-            {
-                throw new Exception("Visitor already there in system");
-            }
+            if (_context.Visitors.Any(v => v.Email == dto.Email))
+                throw new Exception("Visitor already exists");
+
             var visitor = new Visitor
             {
-                FullName = visitorDto.FullName,
-                PhoneNumber = visitorDto.PhoneNumber,
-                Email = visitorDto.Email,
-                Address = visitorDto.Address,
-                //PhotoPath = visitorDto.PhotoPath,
-                Purpose = visitorDto.Purpose,
+                FullName = dto.FullName,
+                PhoneNumber = dto.PhoneNumber,
+                Email = dto.Email,
+                Address = dto.Address,
+                CompanyName = dto.CompanyName,
+                Purpose = dto.Purpose,
+                Comment = dto.Comment,
+                IdProofType = dto.IdProofType,
+                IdProofNumber = dto.IdProofNumber,
+                LicensePlateNumber = dto.LicensePlateNumber,
+                PhotoUrl = dto.PhotoUrl,
+                IsPreRegistered = dto.IsPreRegistered,
+                ExpectedVisitDateTime = dto.ExpectedVisitDateTime,
                 CreatedAt = DateTime.UtcNow
             };
 
             _context.Visitors.Add(visitor);
             await _context.SaveChangesAsync();
-            var createdVisitor = _context.Visitors.SingleOrDefault(v => v.Email == visitorDto.Email);
+
+            // Create corresponding Visit entry
             var visit = new Visit
             {
-                VisitorId = createdVisitor.VisitorId,
-                HostId = visitorDto.HostId,
-                VisitStatus = "Inside"
+                VisitorId = visitor.VisitorId,
+                HostId = dto.HostId,
+                VisitStatus = "Inside",
+                CheckInTime = DateTime.Now
             };
             _context.Visits.Add(visit);
             await _context.SaveChangesAsync();
-            return visitorDto;
+
+            return await GetVisitor(visitor.VisitorId);
         }
 
+        public async Task<string> PutVisitor(int id, VisitorUpdateDto dto)
+        {
+            var visitor = await _context.Visitors.FindAsync(id);
+            if (visitor == null)
+                throw new CustomException(404, "Visitor not found");
+
+            visitor.FullName = dto.FullName ?? visitor.FullName;
+            visitor.PhoneNumber = dto.PhoneNumber ?? visitor.PhoneNumber;
+            visitor.Email = dto.Email ?? visitor.Email;
+            visitor.Address = dto.Address ?? visitor.Address;
+            visitor.CompanyName = dto.CompanyName ?? visitor.CompanyName;
+            visitor.Purpose = dto.Purpose ?? visitor.Purpose;
+            visitor.Comment = dto.Comment ?? visitor.Comment;
+            visitor.IdProofType = dto.IdProofType ?? visitor.IdProofType;
+            visitor.IdProofNumber = dto.IdProofNumber ?? visitor.IdProofNumber;
+            visitor.LicensePlateNumber = dto.LicensePlateNumber ?? visitor.LicensePlateNumber;
+            visitor.PhotoUrl = dto.PhotoUrl ?? visitor.PhotoUrl;
+            visitor.IsPreRegistered = dto.IsPreRegistered ?? visitor.IsPreRegistered;
+            visitor.ExpectedVisitDateTime = dto.ExpectedVisitDateTime ?? visitor.ExpectedVisitDateTime;
+
+            _context.Visitors.Update(visitor);
+            await _context.SaveChangesAsync();
+
+            return "Visitor updated successfully";
+        }
+
+        public async Task<string> DeleteVisitor(int id)
+        {
+            var visitor = await _context.Visitors.FindAsync(id);
+            if (visitor == null)
+                throw new CustomException(404, "Visitor not found");
+
+            var visits = _context.Visits.Where(v => v.VisitorId == id).ToList();
+
+            if (visits.Any(v => v.VisitStatus == "Inside"))
+                throw new Exception("Visitor hasn't checked out yet.");
+
+            _context.Visits.RemoveRange(visits);
+            _context.Visitors.Remove(visitor);
+            await _context.SaveChangesAsync();
+
+            return "Visitor deleted successfully";
+        }
     }
+
 }

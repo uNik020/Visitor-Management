@@ -6,11 +6,9 @@
         public string? PhoneNumber { get; set; }
         public string? Email { get; set; }
         public string? Address { get; set; }
-
         public string? CompanyName { get; set; }
         public string? Purpose { get; set; }
         public string? Comment { get; set; }
-
         public string? IdProofType { get; set; }
         public string? IdProofNumber { get; set; }
         public string? LicensePlateNumber { get; set; }

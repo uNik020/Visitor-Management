@@ -2,6 +2,8 @@
 {
     public class VisitCreateDto
     {
+        //added afterwards for removing errors
+        public int VisitId { get; set; }
         public int VisitorId { get; set; }
         public int HostId { get; set; }
 

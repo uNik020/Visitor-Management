@@ -11,7 +11,7 @@
         public string? DepartmentName { get; set; }
 
         public int? DesignationId { get; set; }
-        public string? DesignationTitle { get; set; }
+        public string? DesignationName { get; set; }
 
         public string? ProfilePictureUrl { get; set; }
         public string? About { get; set; }
