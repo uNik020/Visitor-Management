@@ -44,9 +44,40 @@ namespace VisitorManagement.Services
             });
         }
 
+        //public async Task<VisitorReadDto> GetVisitor(int id)
+        //{
+        //    var visitor = await _context.Visitors.FindAsync(id);
+        //    if (visitor == null)
+        //        throw new CustomException(404, "Visitor not found");
+
+        //    return new VisitorReadDto
+        //    {
+        //        VisitorId = visitor.VisitorId,
+        //        FullName = visitor.FullName,
+        //        PhoneNumber = visitor.PhoneNumber,
+        //        Email = visitor.Email,
+        //        Address = visitor.Address,
+        //        CompanyName = visitor.CompanyName,
+        //        Purpose = visitor.Purpose,
+        //        Comment = visitor.Comment,
+        //        IdProofType = visitor.IdProofType,
+        //        IdProofNumber = visitor.IdProofNumber,
+        //        LicensePlateNumber = visitor.LicensePlateNumber,
+        //        PassCode = visitor.PassCode,
+        //        QrCodeData = visitor.QrCodeData,
+        //        PhotoUrl = visitor.PhotoUrl,
+        //        IsPreRegistered = visitor.IsPreRegistered,
+        //        ExpectedVisitDateTime = visitor.ExpectedVisitDateTime,
+        //        CreatedAt = visitor.CreatedAt
+        //    };
+        //}
+
         public async Task<VisitorReadDto> GetVisitor(int id)
         {
-            var visitor = await _context.Visitors.FindAsync(id);
+            var visitor = await _context.Visitors
+                .Include(v => v.Companions)
+                .FirstOrDefaultAsync(v => v.VisitorId == id);
+
             if (visitor == null)
                 throw new CustomException(404, "Visitor not found");
 
@@ -68,9 +99,11 @@ namespace VisitorManagement.Services
                 PhotoUrl = visitor.PhotoUrl,
                 IsPreRegistered = visitor.IsPreRegistered,
                 ExpectedVisitDateTime = visitor.ExpectedVisitDateTime,
-                CreatedAt = visitor.CreatedAt
+                CreatedAt = visitor.CreatedAt,
+                CompanionNames = visitor.Companions.Select(c => c.FullName).ToList()
             };
         }
+
 
         public async Task<VisitorReadDto> PostVisitor(VisitorCreateDto dto)
         {
@@ -98,7 +131,21 @@ namespace VisitorManagement.Services
             _context.Visitors.Add(visitor);
             await _context.SaveChangesAsync();
 
-            // Create corresponding Visit entry
+            // Create Companion records if provided
+            if (dto.Companions != null && dto.Companions.Any())
+            {
+                foreach (var name in dto.Companions)
+                {
+                    _context.Companions.Add(new Companion
+                    {
+                        FullName = name,
+                        VisitorId = visitor.VisitorId
+                    });
+                }
+                await _context.SaveChangesAsync();
+            }
+
+            // Create Visit record
             var visit = new Visit
             {
                 VisitorId = visitor.VisitorId,
@@ -111,6 +158,7 @@ namespace VisitorManagement.Services
 
             return await GetVisitor(visitor.VisitorId);
         }
+
 
         public async Task<string> PutVisitor(int id, VisitorUpdateDto dto)
         {

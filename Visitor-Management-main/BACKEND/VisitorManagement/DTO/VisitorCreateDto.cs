@@ -12,12 +12,13 @@
         public string? IdProofType { get; set; }
         public string? IdProofNumber { get; set; }
         public string? LicensePlateNumber { get; set; }
-
         public string? PhotoUrl { get; set; }
-
         public bool IsPreRegistered { get; set; } = false;
         public DateTime? ExpectedVisitDateTime { get; set; }
+        public int HostId { get; set; }
 
-        public int HostId { get; set; } // Required only if mapping visitor to a host in Visits table
+        // Adding companions here
+        public List<string>? Companions { get; set; } // List of companion names
     }
+
 }

@@ -23,6 +23,7 @@
 
         public bool IsPreRegistered { get; set; }
         public DateTime? ExpectedVisitDateTime { get; set; }
+        public List<string>? CompanionNames { get; set; }
 
         public DateTime CreatedAt { get; set; }
     }
