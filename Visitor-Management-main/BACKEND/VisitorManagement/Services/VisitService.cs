@@ -29,7 +29,7 @@ namespace VisitorManagement.Services
                     VisitStatus = v.VisitStatus,
                     Department = v.Host.Department.DepartmentName,
                     CheckInTime = v.CheckInTime ?? DateTime.MinValue,
-                    CheckOutTime = v.CheckOutTime ?? DateTime.MinValue
+                    CheckOutTime = v.CheckOutTime
                 }).ToListAsync();
         }
 
@@ -52,7 +52,7 @@ namespace VisitorManagement.Services
                 QrCodeData = visit.QrCodeData,
                 Department = visit.Host.Department.DepartmentName,
                 CheckInTime = visit.CheckInTime ?? DateTime.MinValue,
-                CheckOutTime = visit.CheckOutTime ?? DateTime.MinValue
+                CheckOutTime = visit.CheckOutTime
             };
         }
 
