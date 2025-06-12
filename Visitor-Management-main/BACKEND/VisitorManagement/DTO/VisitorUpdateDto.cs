@@ -16,6 +16,8 @@
         public string? LicensePlateNumber { get; set; }
 
         public string? PhotoUrl { get; set; }
+        public string? PassCode { get; set; }             // Auto-generated per visitor
+        public string? QrCodeData { get; set; }
 
         public bool? IsPreRegistered { get; set; }
         public DateTime? ExpectedVisitDateTime { get; set; }

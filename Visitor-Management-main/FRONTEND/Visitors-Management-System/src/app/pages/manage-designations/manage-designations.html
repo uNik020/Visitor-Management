@@ -1,0 +1,32 @@
+<div class="manage-desig-container">
+  <h2>Manage Designations</h2>
+
+  <form [formGroup]="designationForm" (ngSubmit)="onSubmit()" class="desig-form">
+    <input type="text" formControlName="designationName" placeholder="Enter Designation Name" />
+    <button type="submit">
+      {{ isEditMode ? 'Update designation' : 'Add designation' }}
+    </button>
+  </form>
+
+  <div class="desig-list">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>designation Name</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let desig of designations">
+          <td>{{ desig.designationId }}</td>
+          <td>{{ desig.designationName }}</td>
+          <td>
+            <button class="edit-btn" (click)="onEdit(desig)">Edit</button>
+            <button class="delete-btn" (click)="onDelete(desig.designationId)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

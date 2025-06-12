@@ -137,6 +137,8 @@ namespace VisitorManagement.Services
                 IdProofNumber = dto.IdProofNumber,
                 LicensePlateNumber = dto.LicensePlateNumber,
                 PhotoUrl = dto.PhotoUrl,
+                QrCodeData = dto.QrCodeData,
+                PassCode = dto.PassCode,
                 IsPreRegistered = dto.IsPreRegistered,
                 ExpectedVisitDateTime = dto.ExpectedVisitDateTime,
                 CreatedAt = DateTime.UtcNow
@@ -197,6 +199,8 @@ namespace VisitorManagement.Services
             visitor.IdProofNumber = dto.IdProofNumber ?? visitor.IdProofNumber;
             visitor.LicensePlateNumber = dto.LicensePlateNumber ?? visitor.LicensePlateNumber;
             visitor.PhotoUrl = dto.PhotoUrl ?? visitor.PhotoUrl;
+            visitor.QrCodeData = dto.QrCodeData ?? visitor.QrCodeData;
+            visitor.PassCode = dto.PassCode ?? visitor.PassCode;
             visitor.IsPreRegistered = dto.IsPreRegistered ?? visitor.IsPreRegistered;
             visitor.ExpectedVisitDateTime = dto.ExpectedVisitDateTime ?? visitor.ExpectedVisitDateTime;
 

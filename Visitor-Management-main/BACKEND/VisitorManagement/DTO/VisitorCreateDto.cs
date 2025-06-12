@@ -15,6 +15,8 @@ namespace VisitorManagement.DTO
         public string IdProofNumber { get; set; }
         public string LicensePlateNumber { get; set; }
         public string PhotoUrl { get; set; }
+        public string? PassCode { get; set; }          
+        public string? QrCodeData { get; set; }
         public bool IsPreRegistered { get; set; }
         public DateTime? ExpectedVisitDateTime { get; set; }
         public int HostId { get; set; }

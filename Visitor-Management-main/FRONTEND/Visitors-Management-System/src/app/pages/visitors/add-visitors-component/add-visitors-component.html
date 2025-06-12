@@ -51,7 +51,19 @@
         </div>
       </label>
 
-      <label>Host Name
+      <label>
+        Upload Photo
+        <input
+          type="file"
+          accept="image/*"
+          (change)="onPhotoSelected($event)"
+          capture
+        />
+        <div class="error" *ngIf="photoError">{{ photoError }}</div>
+      </label>
+
+      <label
+        >Host Name
         <select formControlName="hostId">
           <option value="" disabled>Select Host</option>
 
@@ -67,6 +79,58 @@
         </div>
       </label>
 
+      <label
+        >Company Name
+        <input type="text" formControlName="companyName" />
+      </label>
+
+      <label
+        >Comment
+        <textarea formControlName="comment"></textarea>
+      </label>
+
+      <label
+        >ID Proof Type
+        <input
+          type="text"
+          formControlName="idProofType"
+          placeholder="e.g., Aadhar, PAN"
+        />
+      </label>
+
+      <label
+        >ID Proof Number
+        <input type="text" formControlName="idProofNumber" />
+      </label>
+
+      <label
+        >License Plate Number
+        <input type="text" formControlName="licensePlateNumber" />
+      </label>
+
+      <label>
+        <input type="checkbox" formControlName="isPreRegistered" />
+        Pre-Registered?
+      </label>
+
+      <label *ngIf="visitorForm.get('isPreRegistered')?.value">
+        Expected Visit Date & Time
+        <input type="datetime-local" formControlName="expectedVisitDateTime" />
+        <div
+          class="error"
+          *ngIf="visitorForm.get('expectedVisitDateTime')?.touched && visitorForm.get('expectedVisitDateTime')?.invalid"
+        >
+          Expected date is required when pre-registering.
+        </div>
+      </label>
+
+      <div class="qr-section">
+        <label>Pass Code</label>
+        <p><strong>{{ passCode }}</strong></p>
+
+        <label>QR Code</label>
+        
+      </div>
     </div>
 
     <button type="submit" [disabled]="visitorForm.invalid">Add Visitor</button>

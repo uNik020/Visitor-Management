@@ -1,6 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import Swal from 'sweetalert2';
 import { HostService } from '../../../services/Host/host.service';
@@ -8,59 +13,120 @@ import { VisitorService } from '../../../services/Visitor/visitor.service';
 
 @Component({
   selector: 'app-add-visitors-component',
+  standalone: true,
   imports: [ReactiveFormsModule, RouterModule, CommonModule],
   templateUrl: './add-visitors-component.html',
-  styleUrl: './add-visitors-component.css'
+  styleUrl: './add-visitors-component.css',
 })
 export class AddVisitorsComponent {
   visitorForm: FormGroup;
-  hosts:any[] = [];
+  hosts: any[] = [];
+  photoError: string | null = null;
+  passCode: string = '';
+  qrCodeData: string = '';
 
-  constructor(private visitorService : VisitorService,private fb: FormBuilder,private hostService: HostService,private cd: ChangeDetectorRef, private router: Router) {
+  constructor(
+    private visitorService: VisitorService,
+    private fb: FormBuilder,
+    private hostService: HostService,
+    private cd: ChangeDetectorRef,
+    private router: Router
+  ) {
     this.visitorForm = this.fb.group({
       fullName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      phoneNumber: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
+      phoneNumber: [
+        '',
+        [Validators.required, Validators.pattern('^[0-9]{10}$')],
+      ],
       address: [''],
       purpose: ['', Validators.required],
       hostId: ['', Validators.required],
-      // checkInDate: ['', Validators.required],
-      // checkInTime: ['', Validators.required]
+      companyName: [''],
+      comment: [''],
+      idProofType: [''],
+      idProofNumber: [''],
+      licensePlateNumber: [''],
+      isPreRegistered: [false],
+      expectedVisitDateTime: [''],
+      photoUrl: [null],
+      passCode: [''],
+      qrCodeData: [''],
     });
   }
 
   ngOnInit(): void {
-      this.loadHosts();
+    this.loadHosts();
+    this.generatePassCode();
+
+    this.visitorForm.get('isPreRegistered')?.valueChanges.subscribe((isChecked) => {
+      const expectedVisitControl = this.visitorForm.get('expectedVisitDateTime');
+      if (isChecked) {
+        expectedVisitControl?.setValidators([Validators.required]);
+      } else {
+        expectedVisitControl?.clearValidators();
+      }
+      expectedVisitControl?.updateValueAndValidity();
+    });
+  }
+
+generatePassCode() {
+ 
+}
+
+
+  onPhotoSelected(event: Event): void {
+    const file = (event.target as HTMLInputElement)?.files?.[0];
+    if (file) {
+      if (!file.type.startsWith('image/')) {
+        this.photoError = 'Only image files are allowed.';
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.visitorForm.patchValue({ photoUrl: reader.result }); // Base64 string
+        this.photoError = null;
+      };
+      reader.readAsDataURL(file);
     }
-  
-    loadHosts() {
-      this.hostService.getHosts().subscribe(
-        (data: any) => {
-          setTimeout(() => {
-            this.hosts = [...data];
-            console.log(this.hosts);
-            this.cd.detectChanges();
-          },500);
-        },
-        (err) => Swal.fire('Error', err.message, 'error')
-      );
-    }
+  }
+
+  loadHosts() {
+    this.hostService.getHosts().subscribe(
+      (data: any) => {
+        setTimeout(() => {
+          this.hosts = [...data];
+          this.cd.detectChanges();
+        }, 500);
+      },
+      (err) => Swal.fire('Error', err.message, 'error')
+    );
+  }
 
   onSubmit(): void {
     if (this.visitorForm.valid) {
-      console.log('Visitor Data:', this.visitorForm.value);
-      // TODO: Send data to backend
+      // Ensure QR & PassCode are synced
+      this.visitorForm.patchValue({
+        passCode: this.passCode,
+        qrCodeData: this.qrCodeData
+      });
+
       this.visitorService.addVisitor(this.visitorForm.value).subscribe({
-              next: () => {
-                Swal.fire('Success', 'Visitor with visit added successfully', 'success');
-                this.loadHosts();
-                this.visitorForm.reset();
-                this.router.navigate(['/admin/visitor-list']);
-              },
-              error: (err) => Swal.fire('Error', err.error, 'error'),
-            });
+        next: () => {
+          Swal.fire(
+            'Success',
+            'Visitor with visit added successfully',
+            'success'
+          );
+          this.loadHosts();
+          this.visitorForm.reset();
+          this.router.navigate(['/admin/visitor-list']);
+        },
+        error: (err) => Swal.fire('Error', err.error, 'error'),
+      });
     } else {
-      this.visitorForm.markAllAsTouched(); // Show validation errors immediately
+      this.visitorForm.markAllAsTouched();
       Swal.fire({
         icon: 'error',
         title: 'Form Incomplete',
