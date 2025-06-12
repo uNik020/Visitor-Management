@@ -1,1 +1,0 @@
-export var baseurl="https://localhost:7166/api";
