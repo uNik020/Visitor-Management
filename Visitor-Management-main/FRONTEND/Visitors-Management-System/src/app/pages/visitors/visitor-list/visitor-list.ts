@@ -57,18 +57,18 @@ columnDefs = [
         : 'Yet to checkout'
   },
   {
-  headerName: 'Actions',
-  cellRenderer: (params: any) => {
-    return `
-      <button class="btn-edit" data-action="edit" style="margin-right: 5px; padding: 4px 8px; background-color: #0d6efd; color: white; border: none; border-radius: 4px; cursor: pointer;">
+    headerName: 'Actions',
+    cellRenderer: (params:any) => {
+      return `
+        <button style="margin-right: 5px; padding: 4px 8px; background-color: #0d6efd; color: white; border: none; border-radius: 4px; cursor: pointer;">
         Edit
       </button>
-      <button class="btn-delete" data-action="delete" style="padding: 4px 8px; background-color: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;">
+      <button style="padding: 4px 8px; background-color: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;">
         Delete
       </button>
-    `;
+      `;
+    }
   }
-}
 ];
 
 
