@@ -16,7 +16,7 @@ namespace VisitorManagement.DTO
         public string LicensePlateNumber { get; set; }
         public string PhotoUrl { get; set; }
         public bool IsPreRegistered { get; set; }
-        public DateTime ExpectedVisitDateTime { get; set; }
+        public DateTime? ExpectedVisitDateTime { get; set; }
         public int HostId { get; set; }
 
         // Accept a list of companion objects

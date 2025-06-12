@@ -19,5 +19,7 @@
 
         public bool? IsPreRegistered { get; set; }
         public DateTime? ExpectedVisitDateTime { get; set; }
+        public List<CompanionCreateDto>? Companions { get; set; }
+
     }
 }

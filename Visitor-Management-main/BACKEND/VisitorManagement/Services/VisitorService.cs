@@ -40,7 +40,14 @@ namespace VisitorManagement.Services
                 PhotoUrl = v.PhotoUrl,
                 IsPreRegistered = v.IsPreRegistered,
                 ExpectedVisitDateTime = v.ExpectedVisitDateTime,
-                CreatedAt = v.CreatedAt
+                CreatedAt = v.CreatedAt,
+                Companions = v.Companions.Select(c => new CompanionReadDto
+                {
+                    CompanionId = c.CompanionId,
+                    FullName = c.FullName,
+                    ContactNumber = c.ContactNumber,
+                    Email = c.Email
+                }).ToList()
             });
         }
 
@@ -100,7 +107,14 @@ namespace VisitorManagement.Services
                 IsPreRegistered = visitor.IsPreRegistered,
                 ExpectedVisitDateTime = visitor.ExpectedVisitDateTime,
                 CreatedAt = visitor.CreatedAt,
-                CompanionNames = visitor.Companions.Select(c => c.FullName).ToList()
+                Companions = visitor.Companions.Select(c => new CompanionReadDto
+                {
+                    CompanionId = c.CompanionId,
+                    FullName = c.FullName,
+                    ContactNumber = c.ContactNumber,
+                    Email = c.Email
+                }).ToList()
+
             };
         }
 
@@ -162,13 +176,16 @@ namespace VisitorManagement.Services
             return await GetVisitor(visitor.VisitorId);
         }
 
-
         public async Task<string> PutVisitor(int id, VisitorUpdateDto dto)
         {
-            var visitor = await _context.Visitors.FindAsync(id);
+            var visitor = await _context.Visitors
+                .Include(v => v.Companions) // Include companions
+                .FirstOrDefaultAsync(v => v.VisitorId == id);
+
             if (visitor == null)
                 throw new CustomException(404, "Visitor not found");
 
+            // Update visitor fields
             visitor.FullName = dto.FullName ?? visitor.FullName;
             visitor.PhoneNumber = dto.PhoneNumber ?? visitor.PhoneNumber;
             visitor.Email = dto.Email ?? visitor.Email;
@@ -183,15 +200,36 @@ namespace VisitorManagement.Services
             visitor.IsPreRegistered = dto.IsPreRegistered ?? visitor.IsPreRegistered;
             visitor.ExpectedVisitDateTime = dto.ExpectedVisitDateTime ?? visitor.ExpectedVisitDateTime;
 
-            _context.Visitors.Update(visitor);
-            await _context.SaveChangesAsync();
+            // Update companions if provided
+            if (dto.Companions != null)
+            {
+                // Remove old companions
+                _context.Companions.RemoveRange(visitor.Companions);
 
+                // Add new companions
+                foreach (var companionDto in dto.Companions)
+                {
+                    _context.Companions.Add(new Companion
+                    {
+                        FullName = companionDto.FullName,
+                        ContactNumber = companionDto.ContactNumber,
+                        Email = companionDto.Email,
+                        VisitorId = visitor.VisitorId
+                    });
+                }
+            }
+
+            await _context.SaveChangesAsync();
             return "Visitor updated successfully";
         }
 
+
         public async Task<string> DeleteVisitor(int id)
         {
-            var visitor = await _context.Visitors.FindAsync(id);
+            var visitor = await _context.Visitors
+                .Include(v => v.Companions)
+                .FirstOrDefaultAsync(v => v.VisitorId == id);
+
             if (visitor == null)
                 throw new CustomException(404, "Visitor not found");
 
@@ -200,12 +238,17 @@ namespace VisitorManagement.Services
             if (visits.Any(v => v.VisitStatus == "Inside"))
                 throw new Exception("Visitor hasn't checked out yet.");
 
+            // Remove companions
+            _context.Companions.RemoveRange(visitor.Companions);
+
+            // Remove visits and visitor
             _context.Visits.RemoveRange(visits);
             _context.Visitors.Remove(visitor);
-            await _context.SaveChangesAsync();
 
+            await _context.SaveChangesAsync();
             return "Visitor deleted successfully";
         }
+
     }
 
 }
