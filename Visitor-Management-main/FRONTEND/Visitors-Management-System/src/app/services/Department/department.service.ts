@@ -17,19 +17,19 @@ export class DepartmentService {
 
   public addDepartments(dept : any) {
     return this.httpClient.post(`${baseurl}/Department`,dept,{
-    responseType: 'text' // 👈 tell Angular not to parse as JSON
+    responseType: 'text' // telling Angular not to parse as JSON
   });
   }
 
   public updateDepartments(dept : any, deptId : any){
     return this.httpClient.put(`${baseurl}/Department/${deptId}`,dept,{
-    responseType: 'text' // 👈 tell Angular not to parse as JSON
+    responseType: 'text'
   });
   }
 
   public deleteDepartments(deptId : any){
     return this.httpClient.delete(`${baseurl}/Department/${deptId}`,{
-    responseType: 'text' // 👈 tell Angular not to parse as JSON
+    responseType: 'text' 
   });
   }
 }
