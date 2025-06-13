@@ -82,15 +82,16 @@ namespace VisitorManagement.Services
         public async Task<VisitorReadDto> GetVisitor(int id)
         {
             var visitor = await _context.Visitors
-                .Include(v => v.Visits)
-                .ThenInclude(v => v.Host)
-                .ThenInclude(h => h.Department)
-                .Include(v => v.Companions)
-                .FirstOrDefaultAsync(v => v.VisitorId == id);
-
+       .Include(v => v.Visits)
+           .ThenInclude(v => v.Host)
+               .ThenInclude(h => h.Department)
+       .FirstOrDefaultAsync(v => v.VisitorId == id);
 
             if (visitor == null)
-                throw new CustomException(404, "Visitor not found");
+                return null;
+
+            // ✅ Debug: Log visit count
+            Console.WriteLine($"Visitor found: {visitor.FullName}, Visits count: {visitor.Visits?.Count}");
 
             return new VisitorReadDto
             {

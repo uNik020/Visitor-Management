@@ -18,5 +18,7 @@
 
         public string? GatePassNumber { get; set; }
         public string? QrCodeData { get; set; }
+        public List<VisitorReadDto>? Visitors { get; set; }
+        public List<HostReadDto>? Hosts { get; set; }
     }
 }

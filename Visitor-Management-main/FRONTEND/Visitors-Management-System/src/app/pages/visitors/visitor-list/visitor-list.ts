@@ -58,12 +58,19 @@ columnDefs = [
   },
   {
     headerName: 'Actions',
+    suppressCellSelection: true,
+    editable: false,
+    cellClass: 'no-select',
+
     cellRenderer: (params:any) => {
       return `
-        <button style="margin-right: 5px; padding: 4px 8px; background-color: #0d6efd; color: white; border: none; border-radius: 4px; cursor: pointer;">
+        <button onclick="event.stopPropagation()" style="margin-right: 5px; padding: 4px 8px; background-color: #000000; color: white; border: none; border-radius: 4px; cursor: pointer; z-index: 1000;">
+        View
+      </button>
+        <button onclick="event.stopPropagation()" style="margin-right: 5px; padding: 4px 8px; background-color: #0d6efd; color: white; border: none; border-radius: 4px; cursor: pointer; z-index: 1000;">
         Edit
       </button>
-      <button style="padding: 4px 8px; background-color: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;">
+      <button onclick="event.stopPropagation()" style="padding: 4px 8px; background-color: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer; z-index: 1000;">
         Delete
       </button>
       `;
@@ -106,14 +113,18 @@ rowData: any[] = [];
 
 onGridCellClicked(event: any): void {
   if (event.colDef.headerName === 'Actions') {
-    const clickedButton = event.event.target as HTMLElement;
-    if (clickedButton.classList.contains('btn-edit')) {
+    const action = event.event?.target?.getAttribute('data-action');
+    if (action === 'edit') {
       this.onEdit(event.data);
-    } else if (clickedButton.classList.contains('btn-delete')) {
+    } else if (action === 'delete') {
       this.onDelete(event.data.visitorId);
+    } else if (action === 'view') {
+      // Optional: Add your view logic here
+      console.log('View clicked:', event.data);
     }
   }
 }
+
 
   
  loadVisitors() {

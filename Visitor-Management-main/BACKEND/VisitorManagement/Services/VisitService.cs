@@ -15,13 +15,13 @@ namespace VisitorManagement.Services
             _context = context;
         }
 
-        public async Task<List<VisitDto>> GetAllVisitsAsync()
+        public async Task<List<VisitReadDto>> GetAllVisitsAsync()
         {
             return await _context.Visits
                 .Include(v => v.Visitor)
                 .Include(v => v.Host)
                 .ThenInclude(v => v.Department)
-                .Select(v => new VisitDto
+                .Select(v => new VisitReadDto
                 {
                     VisitId = v.VisitId,
                     VisitorName = v.Visitor.FullName,

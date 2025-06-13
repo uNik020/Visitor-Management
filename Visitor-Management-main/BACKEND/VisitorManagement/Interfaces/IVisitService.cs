@@ -5,7 +5,7 @@ namespace VisitorManagement.Interfaces
 {
     public interface IVisitService
     {
-        Task<List<VisitDto>> GetAllVisitsAsync();
+        Task<List<VisitReadDto>> GetAllVisitsAsync();
         Task<VisitReadDto> GetVisitByIdAsync(int id);
         Task<bool> CreateVisitAsync(VisitCreateDto visitDto); // updated
         Task<bool> UpdateVisitAsync(VisitUpdateDto visitDto, int id);
