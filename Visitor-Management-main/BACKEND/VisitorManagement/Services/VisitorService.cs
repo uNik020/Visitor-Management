@@ -82,8 +82,12 @@ namespace VisitorManagement.Services
         public async Task<VisitorReadDto> GetVisitor(int id)
         {
             var visitor = await _context.Visitors
+                .Include(v => v.Visits)
+                .ThenInclude(v => v.Host)
+                .ThenInclude(h => h.Department)
                 .Include(v => v.Companions)
                 .FirstOrDefaultAsync(v => v.VisitorId == id);
+
 
             if (visitor == null)
                 throw new CustomException(404, "Visitor not found");
@@ -113,6 +117,20 @@ namespace VisitorManagement.Services
                     FullName = c.FullName,
                     ContactNumber = c.ContactNumber,
                     Email = c.Email
+                }).ToList(),
+
+                Visits = visitor.Visits.Select(d => new VisitReadDto
+                {
+                    VisitId =d.VisitId,
+                    VisitorName =d.Visitor.FullName,
+                    HostName = d.Host.FullName,
+                    Department = d.Host.Department.DepartmentName,
+                    CheckInTime = d.CheckInTime,
+                    ApprovalComment =d.ApprovalComment,
+                    GatePassNumber=d.GatePassNumber,
+                    IsApproved=d.IsApproved,
+                    CheckOutTime=d.CheckOutTime
+
                 }).ToList()
 
             };
@@ -170,6 +188,8 @@ namespace VisitorManagement.Services
                 VisitorId = visitor.VisitorId,
                 HostId = dto.HostId,
                 VisitStatus = "Inside",
+                IsApproved=true,
+                ApprovalComment="Approved",
                 CheckInTime = DateTime.Now
             };
             _context.Visits.Add(visit);

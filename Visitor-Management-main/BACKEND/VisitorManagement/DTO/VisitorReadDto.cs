@@ -21,9 +21,10 @@
 
         public string? PhotoUrl { get; set; }
 
-        public bool IsPreRegistered { get; set; }
+        public bool? IsPreRegistered { get; set; }
         public DateTime? ExpectedVisitDateTime { get; set; }
         public List<CompanionReadDto>? Companions { get; set; }
+        public List<VisitReadDto>? Visits { get; set; }
 
         public DateTime CreatedAt { get; set; }
     }

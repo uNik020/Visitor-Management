@@ -10,11 +10,13 @@ import { Router, RouterModule } from '@angular/router';
 import Swal from 'sweetalert2';
 import { HostService } from '../../../services/Host/host.service';
 import { VisitorService } from '../../../services/Visitor/visitor.service';
+import { QRCodeComponent } from 'angularx-qrcode';
+
 
 @Component({
   selector: 'app-add-visitors-component',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterModule, CommonModule],
+  imports: [ReactiveFormsModule, RouterModule, CommonModule, QRCodeComponent],
   templateUrl: './add-visitors-component.html',
   styleUrl: './add-visitors-component.css',
 })
@@ -71,7 +73,12 @@ export class AddVisitorsComponent {
   }
 
 generatePassCode() {
- 
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  this.passCode = Array.from({ length: 8 }, () =>
+    chars.charAt(Math.floor(Math.random() * chars.length))
+  ).join('');
+
+  this.visitorForm.patchValue({ passCode: this.passCode });
 }
 
 
@@ -105,33 +112,39 @@ generatePassCode() {
   }
 
   onSubmit(): void {
-    if (this.visitorForm.valid) {
-      // Ensure QR & PassCode are synced
-      this.visitorForm.patchValue({
-        passCode: this.passCode,
-        qrCodeData: this.qrCodeData
-      });
+  if (this.visitorForm.valid) {
+    const formValue = this.visitorForm.value;
 
-      this.visitorService.addVisitor(this.visitorForm.value).subscribe({
-        next: () => {
-          Swal.fire(
-            'Success',
-            'Visitor with visit added successfully',
-            'success'
-          );
-          this.loadHosts();
-          this.visitorForm.reset();
-          this.router.navigate(['/admin/visitor-list']);
-        },
-        error: (err) => Swal.fire('Error', err.error, 'error'),
-      });
-    } else {
-      this.visitorForm.markAllAsTouched();
-      Swal.fire({
-        icon: 'error',
-        title: 'Form Incomplete',
-        text: 'Please fill all required fields correctly.',
-      });
+    // Handle optional expectedVisitDateTime
+    if (!formValue.isPreRegistered) {
+      formValue.expectedVisitDateTime = null;
     }
+
+    // Ensure QR & PassCode are synced
+    formValue.passCode = this.passCode;
+    formValue.qrCodeData = this.qrCodeData;
+
+    this.visitorService.addVisitor(formValue).subscribe({
+      next: () => {
+        Swal.fire(
+          'Success',
+          'Visitor with visit added successfully',
+          'success'
+        );
+        this.loadHosts();
+        this.visitorForm.reset();
+        this.router.navigate(['/admin/visitor-list']);
+      },
+      error: (err) => Swal.fire('Error', err.error, 'error'),
+    });
+  } else {
+    this.visitorForm.markAllAsTouched();
+    Swal.fire({
+      icon: 'error',
+      title: 'Form Incomplete',
+      text: 'Please fill all required fields correctly.',
+    });
   }
+  }
+
 }

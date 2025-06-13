@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace VisitorManagement.Models;
 
@@ -28,10 +29,11 @@ public partial class Visitor
     public string? QrCodeData { get; set; }
 
     // Media
+    [Column(TypeName = "nvarchar(max)")]
     public string? PhotoUrl { get; set; }
 
     // Registration Info
-    public bool IsPreRegistered { get; set; }
+    public bool? IsPreRegistered { get; set; }
 
     public DateTime? ExpectedVisitDateTime { get; set; } // ADDED here for pre-registration
 

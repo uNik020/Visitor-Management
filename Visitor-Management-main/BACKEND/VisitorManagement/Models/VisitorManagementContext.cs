@@ -77,7 +77,7 @@ public partial class VisitorManagementContext : DbContext
             entity.Property(e => e.LicensePlateNumber).HasMaxLength(50);
             entity.Property(e => e.PassCode).HasMaxLength(100);
             entity.Property(e => e.QrCodeData).HasMaxLength(255);
-            entity.Property(e => e.PhotoUrl).HasMaxLength(255);
+            entity.Property(e => e.PhotoUrl).HasColumnType("nvarchar(max)");
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())").HasColumnType("datetime");
             entity.Property(e => e.ExpectedVisitDateTime).HasColumnType("datetime");
         });

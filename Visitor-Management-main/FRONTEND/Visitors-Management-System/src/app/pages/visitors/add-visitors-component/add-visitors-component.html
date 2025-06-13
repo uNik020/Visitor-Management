@@ -108,29 +108,54 @@
         <input type="text" formControlName="licensePlateNumber" />
       </label>
 
-      <label>
-        <input type="checkbox" formControlName="isPreRegistered" />
-        Pre-Registered?
-      </label>
+      <!-- ✅ Pass Code + QR Code: Nicely styled section -->
+      <div class="qr-section">
+        <div class="passcode-display">
+          <label>Pass Code:</label>
+          <span class="code">{{ passCode }}</span>
+        </div>
 
-      <label *ngIf="visitorForm.get('isPreRegistered')?.value">
-        Expected Visit Date & Time
-        <input type="datetime-local" formControlName="expectedVisitDateTime" />
+        <div class="qrcode-box" *ngIf="passCode">
+          <label>QR Code</label>
+          <qrcode
+            [qrdata]="passCode"
+            [width]="160"
+            [errorCorrectionLevel]="'M'"
+          >
+          </qrcode>
+        </div>
+      </div>
+
+      <!-- ✅ Pre-Registered: Checkbox before label, inline -->
+      <div class="checkbox-row">
+        <input
+          type="checkbox"
+          formControlName="isPreRegistered"
+          id="isPreRegistered"
+        />
+        <label for="isPreRegistered">Pre-Registered?</label>
+      </div>
+
+      <!-- ✅ Expected Visit Date: Only shows if checked -->
+      <div
+        *ngIf="visitorForm.get('isPreRegistered')?.value"
+        class="expected-date"
+      >
+        <label>
+          Expected Visit Date & Time
+          <input
+            type="datetime-local"
+            formControlName="expectedVisitDateTime"
+          />
+        </label>
         <div
           class="error"
           *ngIf="visitorForm.get('expectedVisitDateTime')?.touched && visitorForm.get('expectedVisitDateTime')?.invalid"
         >
           Expected date is required when pre-registering.
         </div>
-      </label>
-
-      <div class="qr-section">
-        <label>Pass Code</label>
-        <p><strong>{{ passCode }}</strong></p>
-
-        <label>QR Code</label>
-        
       </div>
+
     </div>
 
     <button type="submit" [disabled]="visitorForm.invalid">Add Visitor</button>

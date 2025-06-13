@@ -17,11 +17,12 @@ namespace VisitorManagement.DTO
         public string PhotoUrl { get; set; }
         public string? PassCode { get; set; }          
         public string? QrCodeData { get; set; }
-        public bool IsPreRegistered { get; set; }
+        public bool? IsPreRegistered { get; set; }
         public DateTime? ExpectedVisitDateTime { get; set; }
         public int HostId { get; set; }
 
         // Accept a list of companion objects
         public List<CompanionCreateDto>? Companions { get; set; }
+        public List<VisitCreateDto>? Visits { get; set; }
     }
 }

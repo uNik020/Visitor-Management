@@ -176,7 +176,7 @@ onGridCellClicked(event: any): void {
   }
 
   onDelete(visitorId: any) {
-    //console.log(visitorId)
+    console.log(visitorId)
     Swal.fire({
           title: 'Are you sure?',
           text: 'This will delete the Visitor!',

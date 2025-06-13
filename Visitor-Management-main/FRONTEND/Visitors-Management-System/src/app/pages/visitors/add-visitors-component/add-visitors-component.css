@@ -86,3 +86,56 @@ option {
   font-size: 0.85rem;
   margin-top: 0.3rem;
 }
+
+/* Pre-Registered Checkbox */
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.checkbox-row input[type='checkbox'] {
+  width: 18px;
+  height: 18px;
+  accent-color: #000;
+  cursor: pointer;
+}
+
+/* Expected Visit Date */
+.expected-date {
+  margin-top: 1rem;
+}
+
+/* Pass Code & QR Layout */
+.qr-section {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  border-top: 1px solid #ddd;
+  padding-top: 1rem;
+}
+
+.passcode-display {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.passcode-display .code {
+  display: inline-block;
+  margin-left: 0.5rem;
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: #000;
+}
+
+.qrcode-box {
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  border: 1px dashed #aaa;
+  border-radius: 8px;
+  background: #fafafa;
+}
