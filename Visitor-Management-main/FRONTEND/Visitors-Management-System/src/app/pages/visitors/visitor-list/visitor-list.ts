@@ -36,7 +36,7 @@ columnDefs = [
   { headerName: 'Purpose', field: 'purpose' },
   {
     headerName: 'Host',
-    valueGetter: (params:any) => params.data.visits?.[0]?.host?.fullName || 'N/A'
+    valueGetter: (params:any) => params.data.visits?.[0]?.hostName || 'N/A'
   },
   {
     headerName: 'Status',

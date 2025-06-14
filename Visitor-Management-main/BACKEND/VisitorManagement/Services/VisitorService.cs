@@ -19,7 +19,8 @@ namespace VisitorManagement.Services
         {
             var visitors = await _context.Visitors
                 .Include(v => v.Visits)
-                .ThenInclude(v => v.Host)
+                    .ThenInclude(v => v.Host)
+                        .ThenInclude(h => h.Department)
                 .ToListAsync();
 
             return visitors.Select(v => new VisitorReadDto
@@ -47,9 +48,25 @@ namespace VisitorManagement.Services
                     FullName = c.FullName,
                     ContactNumber = c.ContactNumber,
                     Email = c.Email
+                }).ToList(),
+
+                // ADD THIS
+                Visits = v.Visits.Select(d => new VisitReadDto
+                {
+                    VisitId = d.VisitId,
+                    VisitorName = d.Visitor.FullName,
+                    HostName = d.Host.FullName,
+                    Department = d.Host.Department.DepartmentName,
+                    CheckInTime = d.CheckInTime,
+                    ApprovalComment = d.ApprovalComment,
+                    GatePassNumber = d.GatePassNumber,
+                    IsApproved = d.IsApproved,
+                    CheckOutTime = d.CheckOutTime
                 }).ToList()
+
             });
         }
+
 
         //public async Task<VisitorReadDto> GetVisitor(int id)
         //{
