@@ -31,14 +31,11 @@ export class ManageHosts implements OnInit {
     private departmentService: DepartmentService
   ) {
     this.hostForm = this.fb.group({
-      fullName: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      phoneNumber: [
-        '',
-        [Validators.required, Validators.pattern('^[0-9]{10}$')],
-      ],
-      departmentId: ['', Validators.required],
-    });
+  fullName: ['', Validators.required],
+  email: ['', [Validators.required, Validators.email]],
+  phoneNumber: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
+  departmentId: ['', Validators.required]
+});
   }
 
   ngOnInit(): void {
@@ -99,15 +96,15 @@ export class ManageHosts implements OnInit {
     }
   }
 
-  editHost(host: any): void {
-    this.editingId = host.hostId;
-    this.hostForm.setValue({
-      fullName: host.fullName,
-      email: host.email,
-      phoneNumber: host.phoneNumber,
-      departmentId: host.departmentId,
-    });
-  }
+editHost(host: any): void {
+  this.editingId = host.hostId;
+  this.hostForm.setValue({
+    fullName: host.fullName,
+    email: host.email,
+    phoneNumber: host.phoneNumber,
+    departmentId: host.departmentId
+  });
+}
 
   deleteHost(id: number): void {
     Swal.fire({

@@ -26,6 +26,7 @@ namespace VisitorManagement.Controllers
             try
             {
                 var hosts = await _hostService.GetHosts();
+
                 var hostDtos = hosts.Select(h => new HostReadDto
                 {
                     HostId = h.HostId,
@@ -33,9 +34,9 @@ namespace VisitorManagement.Controllers
                     Email = h.Email,
                     PhoneNumber = h.PhoneNumber,
                     DepartmentId = h.DepartmentId,
-                    DepartmentName = h.Department?.DepartmentName,
+                    DepartmentName = h.DepartmentName,
                     DesignationId = h.DesignationId,
-                    DesignationName = h.Designation?.DesignationName,
+                    DesignationName = h.DesignationName,
                     ProfilePictureUrl = h.ProfilePictureUrl,
                     About = h.About
                 });
@@ -48,6 +49,7 @@ namespace VisitorManagement.Controllers
             }
         }
 
+        // GET: api/Host/5
         [HttpGet("{id}")]
         public async Task<ActionResult<HostReadDto>> GetHost(int id)
         {
@@ -62,9 +64,9 @@ namespace VisitorManagement.Controllers
                     Email = h.Email,
                     PhoneNumber = h.PhoneNumber,
                     DepartmentId = h.DepartmentId,
-                    DepartmentName = h.Department?.DepartmentName,
+                    DepartmentName = h.DepartmentName,
                     DesignationId = h.DesignationId,
-                    DesignationName = h.Designation?.DesignationName,
+                    DesignationName = h.DesignationName,
                     ProfilePictureUrl = h.ProfilePictureUrl,
                     About = h.About
                 };
@@ -81,16 +83,14 @@ namespace VisitorManagement.Controllers
             }
         }
 
-
         // PUT: api/Host/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutHost(int id, HostCreateDto hostDto)
+        public async Task<IActionResult> PutHost(int id, HostUpdateDto hostDto)
         {
             try
             {
-                var res = await _hostService.PutHost(id, hostDto);
-                return Ok(res);
+                var result = await _hostService.PutHost(id, hostDto);
+                return Ok(result);
             }
             catch (CustomException ex)
             {
@@ -102,16 +102,14 @@ namespace VisitorManagement.Controllers
             }
         }
 
-
         // POST: api/Host
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<myHosts>> PostHost(HostCreateDto hostDto)
         {
             try
             {
-                var createdUser = await _hostService.PostHost(hostDto);
-                return Ok(createdUser);
+                var createdHost = await _hostService.PostHost(hostDto);
+                return Ok(createdHost);
             }
             catch (DbUpdateException ex)
             {
@@ -119,11 +117,12 @@ namespace VisitorManagement.Controllers
 
                 if (message?.Contains("UQ_Users_Email") == true)
                     return BadRequest("Email already exists.");
-                return BadRequest(ex.Message);
+
+                return BadRequest(message ?? ex.Message);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                return StatusCode(500, "An unexpected error occurred: " + ex.Message);
             }
         }
 
@@ -133,8 +132,8 @@ namespace VisitorManagement.Controllers
         {
             try
             {
-                var res = await _hostService.DeleteHost(id);
-                return Ok(res);
+                var result = await _hostService.DeleteHost(id);
+                return Ok(result);
             }
             catch (CustomException ex)
             {

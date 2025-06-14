@@ -12,8 +12,9 @@
 
         public int? DesignationId { get; set; }
         public string? DesignationName { get; set; }
-
         public string? ProfilePictureUrl { get; set; }
         public string? About { get; set; }
+        //public List<DepartmentCreateDto>? Departments { get; set; }
+        //public List<DesignationCreateDto>? Designations { get; set; }
     }
 }

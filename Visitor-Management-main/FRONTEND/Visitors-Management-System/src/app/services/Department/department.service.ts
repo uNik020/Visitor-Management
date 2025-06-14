@@ -17,7 +17,7 @@ export class DepartmentService {
 
   public addDepartments(dept : any) {
     return this.httpClient.post(`${baseurl}/Department`,dept,{
-    responseType: 'text' // telling Angular not to parse as JSON
+    responseType: 'text' 
   });
   }
 

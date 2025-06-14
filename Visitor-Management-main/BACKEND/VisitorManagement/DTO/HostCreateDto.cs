@@ -6,8 +6,13 @@
         public string Email { get; set; } = null!;
         public string? PhoneNumber { get; set; }
         public int? DepartmentId { get; set; }
+        //public string? DepartmentName { get; set; }
         public int? DesignationId { get; set; }
+        //public string? DesignationName { get; set; }
         public string? ProfilePictureUrl { get; set; }
         public string? About { get; set; }
+        //public List<DepartmentCreateDto>? Departments { get; set; }
+        //public List<DesignationCreateDto>? Designations{ get; set; }
+        
     }
 }

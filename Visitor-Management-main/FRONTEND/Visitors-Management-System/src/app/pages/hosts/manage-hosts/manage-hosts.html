@@ -11,11 +11,12 @@
     />
     <!-- <input type="text" placeholder="Department Id" formControlName="departmentId" /> -->
     <select formControlName="departmentId">
-      <option value="" disabled selected>Select department</option>
-      <option *ngFor="let dept of departments" [value]="dept.departmentId">
-        {{ dept.departmentName }}
-      </option>
-    </select>
+    <option value="" disabled selected>Select department</option>
+    <option *ngFor="let dept of departments" [value]="dept.departmentId">
+      {{ dept.departmentName }}
+    </option>
+  </select>
+
     <div class="actions">
       <button type="submit">
         {{ editingId !== null ? 'Update' : 'Add Host' }}
@@ -33,7 +34,7 @@
         <th>Full Name</th>
         <th>Email</th>
         <th>Contact</th>
-        <th>Department Id</th>
+        <th>Department</th>
         <th>Actions</th>
       </tr>
     </thead>
@@ -43,7 +44,7 @@
         <td>{{ host.fullName }}</td>
         <td>{{ host.email }}</td>
         <td>{{ host.phoneNumber }}</td>
-        <td>{{ host.departmentId }}</td>
+        <td>{{ host.departmentName }}</td>
         <td>
           <button class="edit" (click)="editHost(host)">Edit</button>
           <button class="delete" (click)="deleteHost(host.hostId)">
