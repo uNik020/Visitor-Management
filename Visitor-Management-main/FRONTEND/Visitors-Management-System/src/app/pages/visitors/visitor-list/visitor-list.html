@@ -16,47 +16,49 @@
     </button>
   </div>
 
-    <div class="filter-modal" *ngIf="showFilterModal">
-  <div class="filter-modal-content">
-    <h3>Filter Visitors</h3>
+  <div class="filter-modal" *ngIf="showFilterModal">
+    <div class="filter-modal-content">
+      <h3>Filter Visitors</h3>
 
-    <label>
-      Status:
-      <select [(ngModel)]="filterStatus" name="filterStatus">
-        <option value="">All</option>
-        <option value="Inside">Inside</option>
-        <option value="Checked Out">Checked Out</option>
-      </select>
-    </label>
+      <label>
+        Status:
+        <select [(ngModel)]="filterStatus" name="filterStatus">
+          <option value="">All</option>
+          <option value="Inside">Inside</option>
+          <option value="Checked Out">Checked Out</option>
+        </select>
+      </label>
 
-    <label>
-      Host:
-      <select [(ngModel)]="filterHostId" name="filterHostId">
-        <option value="">All</option>
-        <option *ngFor="let host of hosts" [value]="host.hostId">{{ host.fullName }}</option>
-      </select>
-    </label>
+      <label>
+        Host:
+        <select [(ngModel)]="filterHostId" name="filterHostId">
+          <option value="">All</option>
+          <option *ngFor="let host of hosts" [value]="host.hostId">
+            {{ host.fullName }}
+          </option>
+        </select>
+      </label>
 
-    <div class="modal-actions">
-      <button class="btn-apply" (click)="toggleFilterModal()">Apply</button>
-      <button class="btn-clear" (click)="clearFilters()">Clear</button>
+      <div class="modal-actions">
+        <button class="btn-apply" (click)="toggleFilterModal()">Apply</button>
+        <button class="btn-clear" (click)="clearFilters()">Clear</button>
+      </div>
     </div>
   </div>
-</div>
 
   <div class="table-wrapper" *ngIf="rowData.length>0">
     <ag-grid-angular
-    class="ag-theme-alpine"
-    style="width: 100%; height: 500px;"
-    [rowData]="filteredVisitors"
-    [columnDefs]="columnDefs"
-    [defaultColDef]="defaultColDef"
-    (cellClicked)="onGridCellClicked($event)"
-    [pagination]="true"
-    [paginationPageSize]="10"
-    [animateRows]="true"
-  >
-    <!-- <table>
+      class="ag-theme-alpine"
+      style="width: 100%; height: 500px"
+      [rowData]="filteredVisitors"
+      [columnDefs]="columnDefs"
+      [defaultColDef]="defaultColDef"
+      (cellClicked)="onGridCellClicked($event)"
+      [pagination]="true"
+      [paginationPageSize]="10"
+      [animateRows]="true"
+    >
+      <!-- <table>
       <thead>
         <tr>
           <th>Name</th>
@@ -147,6 +149,123 @@
           </select>
         </label>
 
+        <!-- Add these new fields below the existing ones in your form -->
+        <label>
+          Phone Number:
+          <input
+            type="text"
+            [(ngModel)]="editingVisitor.phoneNumber"
+            name="phoneNumber"
+          />
+        </label>
+
+        <label>
+          Address:
+          <input
+            type="text"
+            [(ngModel)]="editingVisitor.address"
+            name="address"
+          />
+        </label>
+
+        <label>
+          Company Name:
+          <input
+            type="text"
+            [(ngModel)]="editingVisitor.companyName"
+            name="companyName"
+          />
+        </label>
+
+        <label>
+          Purpose:
+          <input
+            type="text"
+            [(ngModel)]="editingVisitor.purpose"
+            name="purpose"
+          />
+        </label>
+
+        <label>
+          Comment:
+          <textarea
+            [(ngModel)]="editingVisitor.comment"
+            name="comment"
+          ></textarea>
+        </label>
+
+        <label>
+          ID Proof Type:
+          <input
+            type="text"
+            [(ngModel)]="editingVisitor.idProofType"
+            name="idProofType"
+          />
+        </label>
+
+        <label>
+          ID Proof Number:
+          <input
+            type="text"
+            [(ngModel)]="editingVisitor.idProofNumber"
+            name="idProofNumber"
+          />
+        </label>
+
+        <label>
+          License Plate Number:
+          <input
+            type="text"
+            [(ngModel)]="editingVisitor.licensePlateNumber"
+            name="licensePlateNumber"
+          />
+        </label>
+
+        <label>
+          Photo URL:
+          <input
+            type="file"
+            [(ngModel)]="editingVisitor.photoUrl"
+            name="photoUrl"
+          />
+        </label>
+
+        <label>
+          Pass Code:
+          <input
+            type="text"
+            [(ngModel)]="editingVisitor.passCode"
+            name="passCode"
+          />
+        </label>
+
+        <label>
+          QR Code Data:
+          <input
+            type="text"
+            [(ngModel)]="editingVisitor.qrCodeData"
+            name="qrCodeData"
+          />
+        </label>
+
+        <label>
+          Pre-Registered:
+          <input
+            type="checkbox"
+            [(ngModel)]="editingVisitor.isPreRegistered"
+            name="isPreRegistered"
+          />
+        </label>
+
+        <label>
+          Expected Visit Time:
+          <input
+            type="datetime-local"
+            [(ngModel)]="editingVisitor.expectedVisitDateTime"
+            name="expectedVisitDateTime"
+          />
+        </label>
+
         <div class="modal-actions">
           <button type="submit" class="btn-save">Save Changes</button>
           <button type="button" class="btn-cancel" (click)="cancelEdit()">
@@ -156,6 +275,4 @@
       </form>
     </div>
   </div>
-
-
 </div>

@@ -125,22 +125,26 @@ td {
   position: fixed;
   top: 0;
   left: 0;
+  width: 100vw;
+  height: 100vh;
   width: 100%;
-  height: 100%;
   background: rgba(0,0,0,0.6);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 999;
+  z-index: 99;
 }
 
 .edit-modal-content {
   background: white;
-  padding: 2rem;
-  border-radius: 12px;
   width: 90%;
-  max-width: 500px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  max-width: 600px;
+  max-height: 76vh; /* Important: controls max height */
+  overflow-y: auto;  /* Enables vertical scroll */
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+  position: relative;
 }
 
 .edit-modal-content h3 {
@@ -156,6 +160,7 @@ td {
 }
 
 .edit-modal-content input,
+.edit-modal-content textarea,
 .edit-modal-content select {
   width: 100%;
   padding: 0.6rem;

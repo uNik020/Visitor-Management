@@ -22,6 +22,7 @@ public partial class Visit
     public string? QrCodeData { get; set; }            // Unique to this visit if needed
 
     // Navigation
+    [JsonIgnore]
     public virtual Hosts Host { get; set; } = null!;
 
     [JsonIgnore]
