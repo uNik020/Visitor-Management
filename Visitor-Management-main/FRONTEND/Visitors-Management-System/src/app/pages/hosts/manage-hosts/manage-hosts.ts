@@ -20,6 +20,8 @@ export class ManageHosts implements OnInit {
   departments: any[] = [];
   designations: any[] = [];
   editingId: number | null = null;
+  viewingHost: any = null;
+
 
   constructor(
     private fb: FormBuilder,
@@ -44,6 +46,14 @@ export class ManageHosts implements OnInit {
     this.loadDepartments();
     this.loadDesignations();
   }
+
+  onViewHost(host: any): void {
+  this.viewingHost = { ...host };
+}
+
+closeViewModal(): void {
+  this.viewingHost = null;
+}
 
   loadHosts() {
     this.hostService.getHosts().subscribe({

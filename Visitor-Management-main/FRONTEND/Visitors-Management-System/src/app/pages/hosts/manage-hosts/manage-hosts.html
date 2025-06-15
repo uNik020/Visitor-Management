@@ -54,10 +54,34 @@
         <td>{{ host.departmentName }}</td>
         <td>{{ host.designationName }}</td>
         <td>
-          <button class="edit" (click)="editHost(host)">Edit</button>
-          <button class="delete" (click)="deleteHost(host.hostId)">Delete</button>
-        </td>
+          <button class="view" (click)="onViewHost(host)">View</button>
+  <button class="edit" (click)="editHost(host)">Edit</button>
+  <button class="delete" (click)="deleteHost(host.hostId)">Delete</button>
+</td>
+
       </tr>
     </tbody>
   </table>
+
+  <!-- View Modal -->
+<div class="view-modal" *ngIf="viewingHost">
+  <div class="view-modal-content">
+    <h3>Host Details</h3>
+    <div class="view-field"><strong>Full Name:</strong> {{ viewingHost.fullName }}</div>
+    <div class="view-field"><strong>Email:</strong> {{ viewingHost.email }}</div>
+    <div class="view-field"><strong>Phone Number:</strong> {{ viewingHost.phoneNumber }}</div>
+    <div class="view-field"><strong>Department:</strong> {{ viewingHost.departmentName }}</div>
+    <div class="view-field"><strong>Designation:</strong> {{ viewingHost.designationName }}</div>
+    <div class="view-field"><strong>About:</strong> {{ viewingHost.about || 'N/A' }}</div>
+    <div class="view-field" *ngIf="viewingHost.profilePictureUrl">
+      <strong>Profile Picture:</strong><br />
+      <img [src]="viewingHost.profilePictureUrl" alt="Profile" class="profile-pic" />
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-close" (click)="closeViewModal()">Close</button>
+    </div>
+  </div>
+</div>
+
 </div>

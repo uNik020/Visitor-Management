@@ -275,4 +275,37 @@
       </form>
     </div>
   </div>
+
+  <!-- View Popup Modal -->
+<div class="view-modal" *ngIf="viewingVisitor">
+  <div class="view-modal-content">
+    <h3>Visitor Details</h3>
+    <div class="view-field"><strong>Name:</strong> {{ viewingVisitor.fullName }}</div>
+    <div class="view-field"><strong>Email:</strong> {{ viewingVisitor.email }}</div>
+    <div class="view-field"><strong>Phone:</strong> {{ viewingVisitor.phoneNumber }}</div>
+    <div class="view-field"><strong>Address:</strong> {{ viewingVisitor.address }}</div>
+    <div class="view-field"><strong>Company:</strong> {{ viewingVisitor.companyName }}</div>
+    <div class="view-field"><strong>Purpose:</strong> {{ viewingVisitor.purpose }}</div>
+    <div class="view-field"><strong>Comment:</strong> {{ viewingVisitor.comment }}</div>
+    <div class="view-field"><strong>ID Type:</strong> {{ viewingVisitor.idProofType }}</div>
+    <div class="view-field"><strong>ID Number:</strong> {{ viewingVisitor.idProofNumber }}</div>
+    <div class="view-field"><strong>License Plate:</strong> {{ viewingVisitor.licensePlateNumber }}</div>
+    <div class="view-field"><strong>Pass Code:</strong> {{ viewingVisitor.passCode }}</div>
+    <div class="view-field"><strong>QR Code:</strong> {{ viewingVisitor.qrCodeData }}</div>
+    <div class="view-field"><strong>Pre-Registered:</strong> {{ viewingVisitor.isPreRegistered ? 'Yes' : 'No' }}</div>
+    <div class="view-field"><strong>Expected Visit Time:</strong>
+      {{ viewingVisitor.expectedVisitDateTime | date:'short' }}</div>
+    <div class="view-field" *ngIf="viewingVisitor.visits?.length">
+      <strong>Host:</strong> {{ viewingVisitor.visits[0].hostName || 'N/A' }}<br />
+      <strong>Status:</strong> {{ viewingVisitor.visits[0].visitStatus || 'N/A' }}<br />
+      <strong>Check-In:</strong> {{ viewingVisitor.visits[0].checkInTime | date:'short' }}<br />
+      <strong>Check-Out:</strong> {{ viewingVisitor.visits[0].checkOutTime ? (viewingVisitor.visits[0].checkOutTime | date:'short') : 'Yet to checkout' }}
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-close" (click)="closeViewModal()">Close</button>
+    </div>
+  </div>
+</div>
+
 </div>

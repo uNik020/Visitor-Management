@@ -28,6 +28,14 @@ export class VisitorList {
   showFilterModal = false;
   filterStatus = '';
   filterHostId = '';
+  viewingVisitor: any = null;
+
+onView(visitor: any) {
+  this.viewingVisitor = { ...visitor };
+}
+closeViewModal() {
+  this.viewingVisitor = null;
+}
 
   columnDefs = [
     { headerName: 'Name', field: 'fullName' },
@@ -117,7 +125,7 @@ export class VisitorList {
           this.onDelete(event.data.visitorId);
           break;
         case 'view':
-          console.log('View clicked:', event.data);
+          this.onView(event.data);
           break;
       }
     }
