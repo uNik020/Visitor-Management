@@ -67,13 +67,13 @@ export class Dashboard implements OnInit {
 
   updateRecentVisitors() {
     this.recentVisitors = this.visitors
-      .sort((a, b) => new Date(b.visits[0]?.checkInTime).getTime() - new Date(a.visits[0]?.checkInTime).getTime())
-      .slice(0, 5)
-      .map(v => ({
-        name: v.fullName,
-        time: new Date(v.visits[0]?.checkInTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        host: v.visits[0]?.host?.fullName,
-        status: v.visits[0]?.visitStatus
-      }));
+  .sort((a, b) => new Date(b.visits[0]?.checkInTime).getTime() - new Date(a.visits[0]?.checkInTime).getTime())
+  .slice(0, 5)
+  .map(v => ({
+    name: v.fullName,
+    time: new Date(v.visits[0]?.checkInTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    host: v.visits[0]?.hostName,  // ✅ Change this line
+    status: v.visits[0]?.visitStatus
+  }));
   }
 }

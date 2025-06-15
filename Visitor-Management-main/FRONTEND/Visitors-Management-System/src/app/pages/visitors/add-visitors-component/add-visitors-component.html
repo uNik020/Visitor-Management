@@ -57,7 +57,7 @@
           type="file"
           accept="image/*"
           (change)="onPhotoSelected($event)"
-          capture
+          capture="environment"
         />
         <div class="error" *ngIf="photoError">{{ photoError }}</div>
       </label>

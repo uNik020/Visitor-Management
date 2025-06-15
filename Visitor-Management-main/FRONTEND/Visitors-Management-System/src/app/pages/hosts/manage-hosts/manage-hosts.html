@@ -4,18 +4,24 @@
   <form [formGroup]="hostForm" (ngSubmit)="onSubmit()" class="host-form">
     <input type="text" placeholder="Full Name" formControlName="fullName" />
     <input type="email" placeholder="Email" formControlName="email" />
-    <input
-      type="text"
-      placeholder="Contact Number"
-      formControlName="phoneNumber"
-    />
-    <!-- <input type="text" placeholder="Department Id" formControlName="departmentId" /> -->
+    <input type="text" placeholder="Contact Number" formControlName="phoneNumber" />
+
     <select formControlName="departmentId">
-    <option value="" disabled selected>Select department</option>
-    <option *ngFor="let dept of departments" [value]="dept.departmentId">
-      {{ dept.departmentName }}
-    </option>
-  </select>
+      <option value="" disabled selected>Select department</option>
+      <option *ngFor="let dept of departments" [value]="dept.departmentId">
+        {{ dept.departmentName }}
+      </option>
+    </select>
+
+    <select formControlName="designationId">
+      <option value="" disabled selected>Select designation</option>
+      <option *ngFor="let des of designations" [value]="des.designationId">
+        {{ des.designationName }}
+      </option>
+    </select>
+
+    <input type="file" placeholder="Profile Picture URL" formControlName="profilePictureUrl" />
+    <input type="text" placeholder="About" formControlName="about" />
 
     <div class="actions">
       <button type="submit">
@@ -35,6 +41,7 @@
         <th>Email</th>
         <th>Contact</th>
         <th>Department</th>
+        <th>Designation</th>
         <th>Actions</th>
       </tr>
     </thead>
@@ -45,11 +52,10 @@
         <td>{{ host.email }}</td>
         <td>{{ host.phoneNumber }}</td>
         <td>{{ host.departmentName }}</td>
+        <td>{{ host.designationName }}</td>
         <td>
           <button class="edit" (click)="editHost(host)">Edit</button>
-          <button class="delete" (click)="deleteHost(host.hostId)">
-            Delete
-          </button>
+          <button class="delete" (click)="deleteHost(host.hostId)">Delete</button>
         </td>
       </tr>
     </tbody>
