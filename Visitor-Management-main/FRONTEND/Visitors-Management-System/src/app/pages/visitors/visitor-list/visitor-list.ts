@@ -187,12 +187,12 @@ closeViewModal() {
       qrCodeData: this.editingVisitor.qrCodeData,
       isPreRegistered: this.editingVisitor.isPreRegistered,
       expectedVisitDateTime: this.editingVisitor.expectedVisitDateTime,
-      companions: this.editingVisitor.companions ?? [], // if you support editing companions
+      companions: this.editingVisitor.companions ?? [],
     };
 
-    const visitId = this.editingVisitor.visits[0].visitId;
+    const visitorId = this.editingVisitor.visitorId;
 
-    this.visitorService.updateVisitor(visitorUpdateDto, visitId).subscribe({
+    this.visitorService.updateVisitor(visitorUpdateDto, visitorId).subscribe({
       next: () => {
         Swal.fire('Success', 'Visitor updated successfully', 'success');
         this.loadVisitors();
@@ -222,10 +222,6 @@ closeViewModal() {
       }
     });
   }
-
-  // onView(visitor: any) {
-  //   console.log('View visitor:', visitor);
-  // }
 
   //hosts
   loadHosts() {

@@ -156,6 +156,52 @@
         </div>
       </div>
 
+      <!-- Dropdown for Companion Count -->
+      <label>
+        Number of Companions
+        <select
+          #companionSelect
+          (change)="onCompanionCountChange(companionSelect.value)"
+        >
+          <option *ngFor="let n of [0, 1, 2, 3, 4]" [value]="n">{{ n }}</option>
+        </select>
+      </label>
+
+      <!-- 🧍‍♂️ Companion Forms -->
+      <div
+        formArrayName="companions"
+        class="companions-section"
+        *ngIf="companionForms.length > 0"
+      >
+        <div
+          *ngFor="let companion of companionForms.controls; let i = index"
+          [formGroupName]="i"
+          class="companion-card"
+        >
+          <h3>Companion {{ i + 1 }}</h3>
+
+          <label>
+            Full Name
+            <input type="text" formControlName="fullName" />
+            <div
+              class="error"
+              *ngIf="companion.get('fullName')?.touched && companion.get('fullName')?.invalid"
+            >
+              Companion full name is required.
+            </div>
+          </label>
+
+          <label>
+            Contact Number
+            <input type="text" formControlName="contactNumber" />
+          </label>
+
+          <label>
+            Email
+            <input type="email" formControlName="email" />
+          </label>
+        </div>
+      </div>
     </div>
 
     <button type="submit" [disabled]="visitorForm.invalid">Add Visitor</button>

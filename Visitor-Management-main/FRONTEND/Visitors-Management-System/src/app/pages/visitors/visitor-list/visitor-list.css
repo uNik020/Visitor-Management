@@ -285,3 +285,11 @@ td {
 .btn-close:hover {
   background-color: #222;
 }
+
+.companion-details {
+  padding: 8px;
+  margin-top: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #f4f4f4;
+}

@@ -21,6 +21,7 @@ namespace VisitorManagement.Services
                 .Include(v => v.Visits)
                     .ThenInclude(v => v.Host)
                         .ThenInclude(h => h.Department)
+                .Include(v => v.Companions)
                 .ToListAsync();
 
             return visitors.Select(v => new VisitorReadDto
@@ -50,7 +51,6 @@ namespace VisitorManagement.Services
                     Email = c.Email
                 }).ToList(),
 
-                // ADD THIS
                 Visits = v.Visits.Select(d => new VisitReadDto
                 {
                     VisitId = d.VisitId,
@@ -67,47 +67,18 @@ namespace VisitorManagement.Services
             });
         }
 
-
-        //public async Task<VisitorReadDto> GetVisitor(int id)
-        //{
-        //    var visitor = await _context.Visitors.FindAsync(id);
-        //    if (visitor == null)
-        //        throw new CustomException(404, "Visitor not found");
-
-        //    return new VisitorReadDto
-        //    {
-        //        VisitorId = visitor.VisitorId,
-        //        FullName = visitor.FullName,
-        //        PhoneNumber = visitor.PhoneNumber,
-        //        Email = visitor.Email,
-        //        Address = visitor.Address,
-        //        CompanyName = visitor.CompanyName,
-        //        Purpose = visitor.Purpose,
-        //        Comment = visitor.Comment,
-        //        IdProofType = visitor.IdProofType,
-        //        IdProofNumber = visitor.IdProofNumber,
-        //        LicensePlateNumber = visitor.LicensePlateNumber,
-        //        PassCode = visitor.PassCode,
-        //        QrCodeData = visitor.QrCodeData,
-        //        PhotoUrl = visitor.PhotoUrl,
-        //        IsPreRegistered = visitor.IsPreRegistered,
-        //        ExpectedVisitDateTime = visitor.ExpectedVisitDateTime,
-        //        CreatedAt = visitor.CreatedAt
-        //    };
-        //}
-
         public async Task<VisitorReadDto> GetVisitor(int id)
         {
             var visitor = await _context.Visitors
        .Include(v => v.Visits)
            .ThenInclude(v => v.Host)
                .ThenInclude(h => h.Department)
+        .Include(v => v.Companions)
        .FirstOrDefaultAsync(v => v.VisitorId == id);
 
             if (visitor == null)
                 return null;
 
-            // ✅ Debug: Log visit count
             Console.WriteLine($"Visitor found: {visitor.FullName}, Visits count: {visitor.Visits?.Count}");
 
             return new VisitorReadDto
