@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component } from '@angular/core';
-import { FormBuilder, FormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { VisitorService } from '../../../services/Visitor/visitor.service';
 import Swal from 'sweetalert2';
@@ -170,37 +170,52 @@ closeViewModal() {
     this.editingVisitor = null;
   }
 
-  saveVisitor() {
-    const visitorUpdateDto: any = {
-      fullName: this.editingVisitor.fullName,
-      phoneNumber: this.editingVisitor.phoneNumber,
-      email: this.editingVisitor.email,
-      address: this.editingVisitor.address,
-      companyName: this.editingVisitor.companyName,
-      purpose: this.editingVisitor.purpose,
-      comment: this.editingVisitor.comment,
-      idProofType: this.editingVisitor.idProofType,
-      idProofNumber: this.editingVisitor.idProofNumber,
-      licensePlateNumber: this.editingVisitor.licensePlateNumber,
-      photoUrl: this.editingVisitor.photoUrl,
-      passCode: this.editingVisitor.passCode,
-      qrCodeData: this.editingVisitor.qrCodeData,
-      isPreRegistered: this.editingVisitor.isPreRegistered,
-      expectedVisitDateTime: this.editingVisitor.expectedVisitDateTime,
-      companions: this.editingVisitor.companions ?? [],
-    };
+saveVisitor() {
+  const updatedVisit = this.editingVisitor.visits?.[0];
+  //const isCheckingOut = updatedVisit?.visitStatus === 'Checked Out';
 
-    const visitorId = this.editingVisitor.visitorId;
-
-    this.visitorService.updateVisitor(visitorUpdateDto, visitorId).subscribe({
-      next: () => {
-        Swal.fire('Success', 'Visitor updated successfully', 'success');
-        this.loadVisitors();
-        this.editingVisitor = null;
+  const visitorUpdateDto: any = {
+    fullName: this.editingVisitor.fullName,
+    phoneNumber: this.editingVisitor.phoneNumber,
+    email: this.editingVisitor.email,
+    address: this.editingVisitor.address,
+    companyName: this.editingVisitor.companyName,
+    purpose: this.editingVisitor.purpose,
+    comment: this.editingVisitor.comment,
+    idProofType: this.editingVisitor.idProofType,
+    idProofNumber: this.editingVisitor.idProofNumber,
+    licensePlateNumber: this.editingVisitor.licensePlateNumber,
+    photoUrl: this.editingVisitor.photoUrl,
+    passCode: this.editingVisitor.passCode,
+    qrCodeData: this.editingVisitor.qrCodeData,
+    isPreRegistered: this.editingVisitor.isPreRegistered,
+    expectedVisitDateTime: this.editingVisitor.expectedVisitDateTime,
+    companions: this.editingVisitor.companions ?? [],
+    visits: [
+      {
+        visitId: updatedVisit.visitId,
+        hostId: updatedVisit.hostId,
+        visitStatus: updatedVisit.visitStatus,
+        checkOutTime:
+          updatedVisit.visitStatus === 'Checked Out'
+            ? new Date().toISOString()
+            : null,
       },
-      error: (err) => Swal.fire('Error', err.message, 'error'),
-    });
-  }
+    ],
+  };
+
+  const visitorId = this.editingVisitor.visitorId;
+
+  this.visitorService.updateVisitor(visitorUpdateDto, visitorId).subscribe({
+    next: async () => {
+      await Swal.fire('Success', 'Visitor updated successfully', 'success');
+      this.editingVisitor = null;
+      this.loadVisitors();
+    },
+    error: (err) => Swal.fire('Error', err.message, 'error'),
+  });
+}
+
 
   onDelete(visitorId: any) {
     console.log(visitorId);

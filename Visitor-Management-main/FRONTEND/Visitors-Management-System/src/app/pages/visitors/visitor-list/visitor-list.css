@@ -293,3 +293,13 @@ td {
   border-radius: 6px;
   background-color: #f4f4f4;
 }
+
+.close-btn {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  font-size: 24px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}

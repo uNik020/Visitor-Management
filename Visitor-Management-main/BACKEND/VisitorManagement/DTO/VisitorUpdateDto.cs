@@ -2,7 +2,7 @@
 {
     public class VisitorUpdateDto
     {
-        public string FullName { get; set; }
+        public string? FullName { get; set; }
         public string? PhoneNumber { get; set; }
         public string? Email { get; set; }
         public string? Address { get; set; }
@@ -22,6 +22,8 @@
         public bool? IsPreRegistered { get; set; }
         public DateTime? ExpectedVisitDateTime { get; set; }
         public List<CompanionCreateDto>? Companions { get; set; }
+        public List<VisitUpdateDto>? Visits { get; set; }
+
 
     }
 }

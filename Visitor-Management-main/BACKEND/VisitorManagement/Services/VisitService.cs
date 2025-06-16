@@ -84,7 +84,11 @@ namespace VisitorManagement.Services
 
             visit.VisitStatus = visitDto.VisitStatus ?? visit.VisitStatus;
             visit.CheckInTime = visitDto.CheckInTime ?? visit.CheckInTime;
-            visit.CheckOutTime = visitDto.CheckOutTime ?? visit.CheckOutTime;
+            //visit.CheckOutTime = visitDto.CheckOutTime ?? visit.CheckOutTime;
+            if (visitDto.VisitStatus?.ToLower() == "checked out")
+            {
+                visit.CheckOutTime = visitDto.CheckOutTime ?? DateTime.Now;
+            }
             visit.IsApproved = visitDto.IsApproved ?? visit.IsApproved;
             visit.ApprovalComment = visitDto.ApprovalComment ?? visit.ApprovalComment;
             visit.GatePassNumber = visitDto.GatePassNumber ?? visit.GatePassNumber;
@@ -94,11 +98,12 @@ namespace VisitorManagement.Services
             return await _context.SaveChangesAsync() > 0;
         }
 
-
         public async Task<bool> DeleteVisitAsync(int id)
         {
             var visit = await _context.Visits.FindAsync(id);
             if (visit == null) return false;
+            if (visit.VisitStatus == "Inside")
+                throw new Exception("Cannot delete a visit while visitor is still inside.");
 
             _context.Visits.Remove(visit);
             return await _context.SaveChangesAsync() > 0;

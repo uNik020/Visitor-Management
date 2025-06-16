@@ -10,7 +10,7 @@
         public DateTime? CheckInTime { get; set; }
         public DateTime? CheckOutTime { get; set; }
 
-        public string? VisitStatus { get; set; } // Scheduled, etc.
+        public string? VisitStatus { get; set; }
 
         public bool IsApproved { get; set; } = false;
         public string? ApprovalComment { get; set; }

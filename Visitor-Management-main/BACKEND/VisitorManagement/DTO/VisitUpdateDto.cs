@@ -2,6 +2,7 @@
 {
     public class VisitUpdateDto
     {
+        public int Id { get; set; }
         public string? VisitStatus { get; set; }
         public DateTime? CheckInTime { get; set; }
         public DateTime? CheckOutTime { get; set; }

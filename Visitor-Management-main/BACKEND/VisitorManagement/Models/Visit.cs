@@ -13,7 +13,7 @@ public partial class Visit
     public DateTime? CheckInTime { get; set; }
     public DateTime? CheckOutTime { get; set; }
 
-    public string? VisitStatus { get; set; }           // e.g., Scheduled, CheckedIn, Completed, Cancelled
+    public string? VisitStatus { get; set; }           
 
     public bool IsApproved { get; set; } = false;      // Optional for pre-approvals
     public string? ApprovalComment { get; set; }
