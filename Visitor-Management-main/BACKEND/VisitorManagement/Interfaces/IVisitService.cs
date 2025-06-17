@@ -7,8 +7,8 @@ namespace VisitorManagement.Interfaces
     {
         Task<List<VisitReadDto>> GetAllVisitsAsync();
         Task<VisitReadDto> GetVisitByIdAsync(int id);
-        Task<bool> CreateVisitAsync(VisitCreateDto visitDto); // updated
-        Task<bool> UpdateVisitAsync(VisitUpdateDto visitDto, int id);
+        Task<bool> CreateVisitAsync(VisitCreateDto visitDto);
+        Task<bool> UpdateVisitAsync(int visitId, VisitUpdateDto dto);
         Task<bool> DeleteVisitAsync(int id);
     }
 }

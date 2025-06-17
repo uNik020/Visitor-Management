@@ -55,7 +55,8 @@ namespace VisitorManagement.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutVisit(int id, VisitUpdateDto visitDto)
         {
-            var success = await _visitService.UpdateVisitAsync(visitDto, id);
+            var success = await _visitService.UpdateVisitAsync(id, visitDto);
+
             if (!success)
             {
                 return NotFound("Visit not found or update failed");
@@ -63,6 +64,7 @@ namespace VisitorManagement.Controllers
 
             return Ok("Visit updated successfully");
         }
+
 
 
         // DELETE: api/Visits/5

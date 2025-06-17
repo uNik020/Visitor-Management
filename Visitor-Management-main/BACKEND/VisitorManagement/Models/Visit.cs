@@ -6,7 +6,6 @@ namespace VisitorManagement.Models;
 public partial class Visit
 {
     public int VisitId { get; set; }
-
     public int VisitorId { get; set; }
     public int HostId { get; set; }
 

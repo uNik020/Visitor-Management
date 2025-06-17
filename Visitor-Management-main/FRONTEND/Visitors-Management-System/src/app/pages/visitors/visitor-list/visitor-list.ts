@@ -48,7 +48,9 @@ closeViewModal() {
     {
       headerName: 'Status',
       valueGetter: (params: any) =>
-        params.data.visits?.[0]?.visitStatus || 'N/A',
+  typeof params.data.visits?.[0]?.visitStatus === 'string'
+    ? params.data.visits[0].visitStatus
+    : JSON.stringify(params.data.visits[0]?.visitStatus || 'N/A')
     },
     {
       headerName: 'Checkin At',
@@ -172,7 +174,6 @@ closeViewModal() {
 
 saveVisitor() {
   const updatedVisit = this.editingVisitor.visits?.[0];
-  //const isCheckingOut = updatedVisit?.visitStatus === 'Checked Out';
 
   const visitorUpdateDto: any = {
     fullName: this.editingVisitor.fullName,
@@ -193,7 +194,7 @@ saveVisitor() {
     companions: this.editingVisitor.companions ?? [],
     visits: [
       {
-        visitId: updatedVisit.visitId,
+        id: updatedVisit.visitId,
         hostId: updatedVisit.hostId,
         visitStatus: updatedVisit.visitStatus,
         checkOutTime:
@@ -210,6 +211,7 @@ saveVisitor() {
     next: async () => {
       await Swal.fire('Success', 'Visitor updated successfully', 'success');
       this.editingVisitor = null;
+      //console.log('Visitor updated successfully', visitorUpdateDto, visitorId);
       this.loadVisitors();
     },
     error: (err) => Swal.fire('Error', err.message, 'error'),

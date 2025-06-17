@@ -76,27 +76,28 @@ namespace VisitorManagement.Services
         }
 
 
-
-        public async Task<bool> UpdateVisitAsync(VisitUpdateDto visitDto, int id)
+        public async Task<bool> UpdateVisitAsync(int visitId, VisitUpdateDto dto)
         {
-            var visit = await _context.Visits.FindAsync(id);
-            if (visit == null) return false;
-
-            visit.VisitStatus = visitDto.VisitStatus ?? visit.VisitStatus;
-            visit.CheckInTime = visitDto.CheckInTime ?? visit.CheckInTime;
-            //visit.CheckOutTime = visitDto.CheckOutTime ?? visit.CheckOutTime;
-            if (visitDto.VisitStatus?.ToLower() == "checked out")
+            var visit = await _context.Visits.FindAsync(visitId);
+            if (visit == null)
             {
-                visit.CheckOutTime = visitDto.CheckOutTime ?? DateTime.Now;
+                return false;
             }
-            visit.IsApproved = visitDto.IsApproved ?? visit.IsApproved;
-            visit.ApprovalComment = visitDto.ApprovalComment ?? visit.ApprovalComment;
-            visit.GatePassNumber = visitDto.GatePassNumber ?? visit.GatePassNumber;
-            visit.QrCodeData = visitDto.QrCodeData ?? visit.QrCodeData;
 
-            _context.Visits.Update(visit);
+            // Update fields
+            Console.WriteLine($"Updating VisitStatus to: {dto.VisitStatus}");
+            visit.VisitStatus = dto.VisitStatus;
+            visit.CheckInTime = dto.CheckInTime;
+            visit.CheckOutTime = dto.CheckOutTime;
+            //visit.IsApproved = dto.IsApproved;
+            visit.ApprovalComment = dto.ApprovalComment;
+            visit.GatePassNumber = dto.GatePassNumber;
+            visit.QrCodeData = dto.QrCodeData;
+
             return await _context.SaveChangesAsync() > 0;
+            
         }
+
 
         public async Task<bool> DeleteVisitAsync(int id)
         {

@@ -306,17 +306,13 @@ namespace VisitorManagement.Services
                 }
             }
 
-            // Handle visits using UpdateVisitAsync
             if (dto.Visits != null)
             {
                 foreach (var visitDto in dto.Visits)
                 {
-                    // Reuse your existing logic
-                    await _visitService.UpdateVisitAsync(visitDto, visitDto.Id);
+                    await _visitService.UpdateVisitAsync(visitDto.visitId, visitDto);
                 }
             }
-
-            await _context.SaveChangesAsync();
             return "Visitor updated successfully";
         }
 
