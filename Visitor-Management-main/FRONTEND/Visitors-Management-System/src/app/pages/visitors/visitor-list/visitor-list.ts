@@ -174,6 +174,8 @@ closeViewModal() {
 
 saveVisitor() {
   const updatedVisit = this.editingVisitor.visits?.[0];
+  console.log("Visit ID:", updatedVisit.visitId);
+
 
   const visitorUpdateDto: any = {
     fullName: this.editingVisitor.fullName,

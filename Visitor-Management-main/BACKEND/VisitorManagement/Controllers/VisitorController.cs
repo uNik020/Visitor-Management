@@ -57,8 +57,11 @@ namespace VisitorManagement.Controllers
         {
             try
             {
-                var result = await _visitorService.PutVisitor(id, dto);
-                return Ok(result);
+                var updated = await _visitorService.PutVisitor(id, dto);
+                if (!updated)
+                    return BadRequest("Update failed. Possibly invalid visit ID.");
+
+                return Ok("Visitor updated successfully");
             }
             catch (CustomException ex)
             {

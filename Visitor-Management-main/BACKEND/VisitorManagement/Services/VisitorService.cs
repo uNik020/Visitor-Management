@@ -262,7 +262,7 @@ namespace VisitorManagement.Services
         //    return "Visitor updated successfully";
         //}
 
-        public async Task<string> PutVisitor(int id, VisitorUpdateDto dto)
+        public async Task<bool> PutVisitor(int id, VisitorUpdateDto dto)
         {
             var visitor = await _context.Visitors
                 .Include(v => v.Companions)
