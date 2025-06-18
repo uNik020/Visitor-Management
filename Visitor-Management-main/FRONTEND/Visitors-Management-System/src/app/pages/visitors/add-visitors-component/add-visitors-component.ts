@@ -167,7 +167,8 @@ get idProofNumber() {
 
       // Ensure QR & PassCode are synced
       formValue.passCode = this.passCode;
-      formValue.qrCodeData = this.qrCodeData;
+      //formValue.qrCodeData = this.qrCodeData;
+      formValue.qrCodeData = JSON.stringify(formValue); // Store the entire form data as JSON string
 
       this.visitorService.addVisitor(formValue).subscribe({
         next: () => {
@@ -178,7 +179,9 @@ get idProofNumber() {
           );
           this.loadHosts();
           this.visitorForm.reset();
-          this.router.navigate(['/admin/visitor-list']);
+          this.router.navigate(['/admin/visitor-list'],{
+            state: { qrData: formValue.qrCodeData }// Pass the QR data to the visitor list
+          });
         },
         error: (err) => Swal.fire('Error', err.error, 'error'),
       });

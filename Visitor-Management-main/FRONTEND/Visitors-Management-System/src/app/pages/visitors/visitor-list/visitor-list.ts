@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -8,12 +8,13 @@ import { HostService } from '../../../services/Host/host.service';
 import { AgGridModule } from 'ag-grid-angular';
 import { ModuleRegistry } from 'ag-grid-community';
 import { AllCommunityModule } from 'ag-grid-community';
+import { QRCodeComponent } from 'angularx-qrcode';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 @Component({
   selector: 'app-visitor-list',
-  imports: [RouterModule, FormsModule, CommonModule, AgGridModule],
+  imports: [RouterModule, FormsModule, CommonModule, AgGridModule, QRCodeComponent],
   templateUrl: './visitor-list.html',
   styleUrl: './visitor-list.css',
 })
@@ -30,12 +31,56 @@ export class VisitorList {
   filterHostId = '';
   viewingVisitor: any = null;
 
+  qrData: string = ''; // For QR code generation from add visitor form
+
+    constructor(
+    private cd: ChangeDetectorRef,
+    private visitorService: VisitorService,
+    private hostService: HostService,
+    private location: Location
+  ) {
+     const state = this.location.getState() as { qrData: string };
+    this.qrData = state.qrData || '';
+  }
+
+  
+  rowData: any[] = [];
+
+  ngOnInit(): void {
+    this.loadVisitors();
+    this.loadHosts();
+  }
+
 onView(visitor: any) {
   this.viewingVisitor = { ...visitor };
+
+  const qrPayload = {
+    fullName: visitor.fullName,
+    email: visitor.email,
+    phoneNumber: visitor.phoneNumber,
+    address: visitor.address,
+    companyName: visitor.companyName,
+    purpose: visitor.purpose,
+    comment: visitor.comment,
+    idProofType: visitor.idProofType,
+    idProofNumber: visitor.idProofNumber,
+    licensePlateNumber: visitor.licensePlateNumber,
+    passCode: visitor.passCode,
+    isPreRegistered: visitor.isPreRegistered,
+    expectedVisitDateTime: visitor.expectedVisitDateTime,
+    host: visitor.visits?.[0]?.hostName || '',
+    status: visitor.visits?.[0]?.visitStatus || '',
+    checkInTime: visitor.visits?.[0]?.checkInTime || '',
+    checkOutTime: visitor.visits?.[0]?.checkOutTime || '',
+    companions: visitor.companions || []
+  };
+
+  this.qrData = JSON.stringify(qrPayload); // For QR code
 }
-closeViewModal() {
-  this.viewingVisitor = null;
-}
+
+  closeViewModal() {
+    this.viewingVisitor = null;
+  }
 
   columnDefs = [
     { headerName: 'Name', field: 'fullName' },
@@ -92,19 +137,6 @@ closeViewModal() {
     filter: true,
     resizable: true,
   };
-
-  rowData: any[] = [];
-
-  constructor(
-    private cd: ChangeDetectorRef,
-    private visitorService: VisitorService,
-    private hostService: HostService
-  ) {}
-
-  ngOnInit(): void {
-    this.loadVisitors();
-    this.loadHosts();
-  }
 
   onActionClicked(params: any) {
     const action = params.event?.target?.getAttribute('data-action');
@@ -189,7 +221,7 @@ saveVisitor() {
     licensePlateNumber: this.editingVisitor.licensePlateNumber,
     photoUrl: this.editingVisitor.photoUrl,
     passCode: this.editingVisitor.passCode,
-    qrCodeData: this.editingVisitor.qrCodeData,
+    //qrCodeData: this.editingVisitor.qrCodeData,
     isPreRegistered: this.editingVisitor.isPreRegistered,
     expectedVisitDateTime: this.editingVisitor.expectedVisitDateTime,
     companions: this.editingVisitor.companions ?? [],

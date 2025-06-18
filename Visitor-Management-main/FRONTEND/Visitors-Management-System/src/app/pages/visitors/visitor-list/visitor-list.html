@@ -238,14 +238,14 @@
           />
         </label>
 
-        <label>
+        <!-- <label>
           QR Code Data:
           <input
             type="text"
             [(ngModel)]="editingVisitor.qrCodeData"
             name="qrCodeData"
           />
-        </label>
+        </label> -->
 
         <label>
           Pre-Registered:
@@ -281,12 +281,12 @@
                 [(ngModel)]="companion.fullName"
                 name="companionName{{ i }}"
                 required
-                />
-              </label>
-              
-              <label>
-                contact Number
-                <input
+              />
+            </label>
+
+            <label>
+              contact Number
+              <input
                 type="text"
                 [(ngModel)]="companion.contactNumber"
                 name="companioncontactNumber{{ i }}"
@@ -370,9 +370,16 @@
       <div class="view-field">
         <strong>Pass Code:</strong> {{ viewingVisitor.passCode }}
       </div>
-      <div class="view-field">
-        <strong>QR Code:</strong> {{ viewingVisitor.qrCodeData }}
+
+      <div class="view-field" *ngIf="qrData">
+        <strong>QRCode:</strong>
+        <qrcode
+          [qrdata]="qrData"
+          [width]="250"
+          [errorCorrectionLevel]="'M'"
+        ></qrcode>
       </div>
+
       <div class="view-field">
         <strong>Pre-Registered:</strong> {{ viewingVisitor.isPreRegistered ?
         'Yes' : 'No' }}
@@ -389,7 +396,8 @@
         <strong>Check-In:</strong> {{ viewingVisitor.visits[0].checkInTime |
         date:'short' }}<br />
         <strong>Check-Out:</strong> {{ viewingVisitor.visits[0].checkOutTime ?
-        (viewingVisitor.visits[0].checkOutTime | date:'short') : 'Yet to checkout' }}
+        (viewingVisitor.visits[0].checkOutTime | date:'short') : 'Yet to
+        checkout' }}
       </div>
 
       <div class="modal-actions">
