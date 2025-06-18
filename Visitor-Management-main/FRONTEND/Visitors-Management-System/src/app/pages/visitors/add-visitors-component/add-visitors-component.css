@@ -164,3 +164,9 @@ option {
   font-size: 1.1rem;
   color: #222;
 }
+
+.inline{
+  display: flex;
+  align-items:baseline;
+  gap: 0.2rem;
+}

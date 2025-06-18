@@ -2,8 +2,7 @@
   <h2>Add Visitor</h2>
   <form [formGroup]="visitorForm" (ngSubmit)="onSubmit()">
     <div class="form-grid">
-      <label
-        >Full Name
+      <label><div class="inline">Full Name<i style="color: red;">*</i></div>
         <input type="text" formControlName="fullName" />
         <div
           class="error"
@@ -14,7 +13,7 @@
       </label>
 
       <label
-        >Email
+        ><div class="inline">Email<i style="color: red;">*</i></div>
         <input type="email" formControlName="email" />
         <div
           class="error"
@@ -25,7 +24,7 @@
       </label>
 
       <label
-        >Contact Number
+        ><div class="inline">Phone Number<i style="color: red;">*</i></div>
         <input type="text" formControlName="phoneNumber" />
         <div
           class="error"
@@ -36,12 +35,12 @@
       </label>
 
       <label
-        >Address (Optional)
+        ><div class="inline">Address<i>(Optional)</i></div>
         <textarea formControlName="address"></textarea>
       </label>
 
       <label
-        >Visit Purpose
+        ><div class="inline">Visit Purpose<i style="color: red;">*</i></div>
         <input type="text" formControlName="purpose" />
         <div
           class="error"
@@ -52,7 +51,7 @@
       </label>
 
       <label>
-        Upload Photo
+       <div class="inline">Upload Photo<i style="color: red;">*</i></div>
         <input
           type="file"
           accept="image/*"
@@ -63,7 +62,7 @@
       </label>
 
       <label
-        >Host Name
+        ><div class="inline">Host Name<i style="color: red;">*</i></div>
         <select formControlName="hostId">
           <option value="" disabled>Select Host</option>
 
@@ -83,26 +82,26 @@
         >Company Name
         <input type="text" formControlName="companyName" />
       </label>
+      
+      <label>ID Proof Type
+        <select formControlName="idProofType" name="idProofType">
+          <option value="" disabled selected>Select ID Proof Type</option>
+          <option value="Aadhar Card">Aadhar Card</option>
+          <option value="Pan Card">Pan Card</option>
+          <option value="Driving License">Driving License</option>
+        </select>
+      </label>
+    
+      <label
+      >ID Proof Number
+      <input type="text" formControlName="idProofNumber" />
+    </label>
 
       <label
         >Comment
         <textarea formControlName="comment"></textarea>
       </label>
-
-      <label
-        >ID Proof Type
-        <input
-          type="text"
-          formControlName="idProofType"
-          placeholder="e.g., Aadhar, PAN"
-        />
-      </label>
-
-      <label
-        >ID Proof Number
-        <input type="text" formControlName="idProofNumber" />
-      </label>
-
+    
       <label
         >License Plate Number
         <input type="text" formControlName="licensePlateNumber" />

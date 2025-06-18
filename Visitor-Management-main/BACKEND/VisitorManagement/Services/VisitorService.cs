@@ -194,74 +194,6 @@ namespace VisitorManagement.Services
             return await GetVisitor(visitor.VisitorId);
         }
 
-        //public async Task<string> PutVisitor(int id, VisitorUpdateDto dto)
-        //{
-        //    var visitor = await _context.Visitors
-        //        .Include(v => v.Companions) // Include companions
-        //        .Include(v => v.Visits)
-        //        .FirstOrDefaultAsync(v => v.VisitorId == id);
-
-        //    if (visitor == null)
-        //        throw new CustomException(404, "Visitor not found");
-
-        //    // Update visitor fields
-        //    visitor.FullName = dto.FullName ?? visitor.FullName;
-        //    visitor.PhoneNumber = dto.PhoneNumber ?? visitor.PhoneNumber;
-        //    visitor.Email = dto.Email ?? visitor.Email;
-        //    visitor.Address = dto.Address ?? visitor.Address;
-        //    visitor.CompanyName = dto.CompanyName ?? visitor.CompanyName;
-        //    visitor.Purpose = dto.Purpose ?? visitor.Purpose;
-        //    visitor.Comment = dto.Comment ?? visitor.Comment;
-        //    visitor.IdProofType = dto.IdProofType ?? visitor.IdProofType;
-        //    visitor.IdProofNumber = dto.IdProofNumber ?? visitor.IdProofNumber;
-        //    visitor.LicensePlateNumber = dto.LicensePlateNumber ?? visitor.LicensePlateNumber;
-        //    visitor.PhotoUrl = dto.PhotoUrl ?? visitor.PhotoUrl;
-        //    visitor.QrCodeData = dto.QrCodeData ?? visitor.QrCodeData;
-        //    visitor.PassCode = dto.PassCode ?? visitor.PassCode;
-        //    visitor.IsPreRegistered = dto.IsPreRegistered ?? visitor.IsPreRegistered;
-        //    visitor.ExpectedVisitDateTime = dto.ExpectedVisitDateTime ?? visitor.ExpectedVisitDateTime;
-
-        //    // Update companions if provided
-        //    if (dto.Companions != null)
-        //    {
-        //        // Remove old companions
-        //        _context.Companions.RemoveRange(visitor.Companions);
-
-        //        // Add new companions
-        //        foreach (var companionDto in dto.Companions)
-        //        {
-        //            _context.Companions.Add(new Companion
-        //            {
-        //                FullName = companionDto.FullName,
-        //                ContactNumber = companionDto.ContactNumber,
-        //                Email = companionDto.Email,
-        //                VisitorId = visitor.VisitorId
-        //            });
-        //        }
-        //    }
-
-        //    // Update visits if provided
-        //    if (dto.Visits != null)
-        //    {
-        //        foreach (var visitDto in dto.Visits)
-        //        {
-        //            var visit = visitor.Visits.FirstOrDefault(v => v.VisitId == visitDto.Id);
-        //            if (visit != null)
-        //            {
-        //                visit.VisitStatus = visitDto.VisitStatus ?? visit.VisitStatus;
-        //                visit.CheckInTime = visitDto.CheckInTime ?? visit.CheckInTime;
-        //                visit.CheckOutTime = visitDto.CheckOutTime ?? visit.CheckOutTime;
-        //                visit.IsApproved = visitDto.IsApproved ?? visit.IsApproved;
-        //                visit.ApprovalComment = visitDto.ApprovalComment ?? visit.ApprovalComment;
-        //                visit.GatePassNumber = visitDto.GatePassNumber ?? visit.GatePassNumber;
-        //            }
-        //        }
-        //    }
-
-        //    await _context.SaveChangesAsync();
-        //    return "Visitor updated successfully";
-        //}
-
         public async Task<bool> PutVisitor(int id, VisitorUpdateDto dto)
         {
             var visitor = await _context.Visitors
@@ -289,7 +221,7 @@ namespace VisitorManagement.Services
             visitor.IsPreRegistered = dto.IsPreRegistered ?? visitor.IsPreRegistered;
             visitor.ExpectedVisitDateTime = dto.ExpectedVisitDateTime ?? visitor.ExpectedVisitDateTime;
 
-            // Handle companions
+            // Update companions
             if (dto.Companions != null)
             {
                 _context.Companions.RemoveRange(visitor.Companions);
@@ -306,14 +238,30 @@ namespace VisitorManagement.Services
                 }
             }
 
+            // Update visits
             if (dto.Visits != null)
             {
-                foreach (var visitDto in dto.Visits)
+                try
                 {
-                    await _visitService.UpdateVisitAsync(visitDto.visitId, visitDto);
+                    foreach (var visitDto in dto.Visits)
+                    {
+                        var success = await _visitService.UpdateVisitAsync(visitDto.visitId, visitDto);
+                        if (!success)
+                            throw new CustomException(400, $"Visit update failed for Visit ID {visitDto.visitId}");
+                    }
                 }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Visit update failed: " + ex.Message);
+                    throw new Exception("Visit update failed" +ex.Message);
+                }
+
             }
-            return "Visitor updated successfully";
+
+            // Save changes to Visitor and companions
+            await _context.SaveChangesAsync();
+
+            return true;
         }
 
 

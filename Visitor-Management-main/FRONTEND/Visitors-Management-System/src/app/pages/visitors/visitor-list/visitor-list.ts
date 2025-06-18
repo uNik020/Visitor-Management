@@ -176,7 +176,6 @@ saveVisitor() {
   const updatedVisit = this.editingVisitor.visits?.[0];
   console.log("Visit ID:", updatedVisit.visitId);
 
-
   const visitorUpdateDto: any = {
     fullName: this.editingVisitor.fullName,
     phoneNumber: this.editingVisitor.phoneNumber,
@@ -196,9 +195,10 @@ saveVisitor() {
     companions: this.editingVisitor.companions ?? [],
     visits: [
       {
-        id: updatedVisit.visitId,
+        visitId: updatedVisit.visitId,
         hostId: updatedVisit.hostId,
         visitStatus: updatedVisit.visitStatus,
+        checkedInTime: updatedVisit.visitStatus,
         checkOutTime:
           updatedVisit.visitStatus === 'Checked Out'
             ? new Date().toISOString()
@@ -208,9 +208,12 @@ saveVisitor() {
   };
 
   const visitorId = this.editingVisitor.visitorId;
+  //console.log('Visitor updating i think', visitorUpdateDto, visitorId);
 
   this.visitorService.updateVisitor(visitorUpdateDto, visitorId).subscribe({
     next: async () => {
+      //console.log('Visitor updating ???/ or not', visitorUpdateDto, visitorId);
+      
       await Swal.fire('Success', 'Visitor updated successfully', 'success');
       this.editingVisitor = null;
       //console.log('Visitor updated successfully', visitorUpdateDto, visitorId);

@@ -89,7 +89,7 @@ namespace VisitorManagement.Services
             visit.VisitStatus = dto.VisitStatus;
             visit.CheckInTime = dto.CheckInTime;
             visit.CheckOutTime = dto.CheckOutTime;
-            //visit.IsApproved = dto.IsApproved;
+            visit.IsApproved = dto.IsApproved;
             visit.ApprovalComment = dto.ApprovalComment;
             visit.GatePassNumber = dto.GatePassNumber;
             visit.QrCodeData = dto.QrCodeData;
