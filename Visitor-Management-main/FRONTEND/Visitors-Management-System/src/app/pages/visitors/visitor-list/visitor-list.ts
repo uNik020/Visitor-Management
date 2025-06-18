@@ -230,7 +230,7 @@ saveVisitor() {
         visitId: updatedVisit.visitId,
         hostId: updatedVisit.hostId,
         visitStatus: updatedVisit.visitStatus,
-        checkedInTime: updatedVisit.visitStatus,
+        //checkedInTime: updatedVisit.visitStatus,
         checkOutTime:
           updatedVisit.visitStatus === 'Checked Out'
             ? new Date().toISOString()

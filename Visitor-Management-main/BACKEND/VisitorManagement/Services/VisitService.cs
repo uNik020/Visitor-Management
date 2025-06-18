@@ -87,12 +87,11 @@ namespace VisitorManagement.Services
             // Update fields
             Console.WriteLine($"Updating VisitStatus to: {dto.VisitStatus}");
             visit.VisitStatus = dto.VisitStatus;
-            visit.CheckInTime = dto.CheckInTime;
-
             if(dto.CheckInTime != null)
             {
-                visit.CheckOutTime = dto.CheckOutTime;
+                visit.CheckInTime = dto.CheckInTime;
             }
+            visit.CheckOutTime = dto.CheckOutTime;
             visit.IsApproved = dto.IsApproved;
             visit.ApprovalComment = dto.ApprovalComment;
             visit.GatePassNumber = dto.GatePassNumber;
