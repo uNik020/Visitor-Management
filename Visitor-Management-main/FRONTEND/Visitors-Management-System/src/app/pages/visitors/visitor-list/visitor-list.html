@@ -130,7 +130,7 @@
             name="host"
             required
           >
-            <option value="" disabled selected>Select Host</option>
+            <option value="" selected disabled>Select Host</option>
             <option *ngFor="let host of hosts" [value]="host.hostId">
               {{ host.fullName }}
             </option>

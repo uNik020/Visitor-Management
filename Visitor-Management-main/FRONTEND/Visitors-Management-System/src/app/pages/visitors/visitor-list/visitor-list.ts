@@ -206,7 +206,7 @@ onView(visitor: any) {
 
 saveVisitor() {
   const updatedVisit = this.editingVisitor.visits?.[0];
-  console.log("Visit ID:", updatedVisit.visitId);
+  console.log("Visit ID:", updatedVisit);
 
   const visitorUpdateDto: any = {
     fullName: this.editingVisitor.fullName,
