@@ -2,7 +2,8 @@
   <h2>Add Visitor</h2>
   <form [formGroup]="visitorForm" (ngSubmit)="onSubmit()">
     <div class="form-grid">
-      <label><div class="inline">Full Name<i style="color: red;">*</i></div>
+      <label
+        ><div class="inline">Full Name<i style="color: red">*</i></div>
         <input type="text" formControlName="fullName" />
         <div
           class="error"
@@ -13,7 +14,7 @@
       </label>
 
       <label
-        ><div class="inline">Email<i style="color: red;">*</i></div>
+        ><div class="inline">Email<i style="color: red">*</i></div>
         <input type="email" formControlName="email" />
         <div
           class="error"
@@ -24,7 +25,7 @@
       </label>
 
       <label
-        ><div class="inline">Phone Number<i style="color: red;">*</i></div>
+        ><div class="inline">Phone Number<i style="color: red">*</i></div>
         <input type="text" formControlName="phoneNumber" />
         <div
           class="error"
@@ -40,7 +41,7 @@
       </label>
 
       <label
-        ><div class="inline">Visit Purpose<i style="color: red;">*</i></div>
+        ><div class="inline">Visit Purpose<i style="color: red">*</i></div>
         <input type="text" formControlName="purpose" />
         <div
           class="error"
@@ -51,7 +52,7 @@
       </label>
 
       <label>
-       <div class="inline">Upload Photo<i style="color: red;">*</i></div>
+        <div class="inline">Upload Photo<i style="color: red">*</i></div>
         <input
           type="file"
           accept="image/*"
@@ -62,7 +63,7 @@
       </label>
 
       <label
-        ><div class="inline">Host Name<i style="color: red;">*</i></div>
+        ><div class="inline">Host Name<i style="color: red">*</i></div>
         <select formControlName="hostId">
           <option value="" disabled>Select Host</option>
 
@@ -82,8 +83,9 @@
         >Company Name
         <input type="text" formControlName="companyName" />
       </label>
-      
-      <label>ID Proof Type
+
+      <label
+        >ID Proof Type
         <select formControlName="idProofType" name="idProofType">
           <option value="" disabled selected>Select ID Proof Type</option>
           <option value="Aadhar Card">Aadhar Card</option>
@@ -91,23 +93,49 @@
           <option value="Driving License">Driving License</option>
         </select>
       </label>
-    
+      <div
+        *ngIf="visitorForm.get('idProofType')?.touched && visitorForm.get('idProofType')?.invalid"
+        class="error"
+      >
+        ID Proof Type is required.
+      </div>
+
+
       <label
-      >ID Proof Number
-      <input type="text" formControlName="idProofNumber" />
+        >ID Proof Number
+        <input type="text" formControlName="idProofNumber" />
+        <div class="error"
+        *ngIf="idProofNumber?.touched && idProofNumber?.errors?.['required']"
+        >
+        ID Proof Number is required.
+      </div>
+      <div class="error" *ngIf="idProofNumber?.touched && idProofNumber?.errors?.['pattern']">
+        <ng-container [ngSwitch]="idProofType?.value">
+          <span *ngSwitchCase="'Aadhar Card'"
+          >Enter a valid 12-digit Aadhar number.</span
+          >
+          <span *ngSwitchCase="'Pan Card'"
+          >Enter a valid PAN (e.g., ABCDE1234F).</span
+          >
+          <span *ngSwitchCase="'Driving License'"
+          >Enter a valid DL (e.g., MH0120190001234).</span
+          >
+          <span *ngSwitchDefault>Invalid format.</span>
+        </ng-container>
+      </div>
     </label>
 
       <label
         >Comment
         <textarea formControlName="comment"></textarea>
       </label>
-    
+
       <label
         >License Plate Number
         <input type="text" formControlName="licensePlateNumber" />
       </label>
 
-      <!-- ✅ Pass Code + QR Code: Nicely styled section -->
+      <!-- Pass Code + QR Code: Nicely styled section -->
       <div class="qr-section">
         <div class="passcode-display">
           <label>Pass Code:</label>

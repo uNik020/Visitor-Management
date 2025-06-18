@@ -28,6 +28,16 @@ export class AddVisitorsComponent {
   qrCodeData: string = '';
   companionCount: number = 0;
 
+  // Getter methods for form controls
+  get idProofType() {
+  return this.visitorForm.get('idProofType');
+}
+
+// Getter for idProofNumber control
+get idProofNumber() {
+  return this.visitorForm.get('idProofNumber');
+}
+
   constructor(
     private visitorService: VisitorService,
     private fb: FormBuilder,
@@ -47,8 +57,8 @@ export class AddVisitorsComponent {
       hostId: ['', Validators.required],
       companyName: [''],
       comment: [''],
-      idProofType: [''],
-      idProofNumber: [''],
+       idProofType: ['', Validators.required],
+      idProofNumber: ['', Validators.required],
       licensePlateNumber: [''],
       isPreRegistered: [false],
       expectedVisitDateTime: [''],
@@ -76,11 +86,16 @@ export class AddVisitorsComponent {
         }
         expectedVisitControl?.updateValueAndValidity();
       });
+
+      this.visitorForm.get('idProofType')?.valueChanges.subscribe((selectedType) => {
+      this.setIdProofValidators(selectedType);
+    });
   }
 
   get companionForms(): FormArray {
     return this.visitorForm.get('companions') as FormArray;
   }
+
   generatePassCode() {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     this.passCode = Array.from({ length: 8 }, () =>
@@ -175,5 +190,37 @@ export class AddVisitorsComponent {
         text: 'Please fill all required fields correctly.',
       });
     }
+  }
+
+    setIdProofValidators(type: string): void {
+    const idProofNumberControl = this.visitorForm.get('idProofNumber');
+
+    if (!idProofNumberControl) return;
+
+    switch (type) {
+      case 'Aadhar Card':
+        idProofNumberControl.setValidators([
+          Validators.required,
+          Validators.pattern(/^\d{12}$/)
+        ]);
+        break;
+      case 'Pan Card':
+        idProofNumberControl.setValidators([
+          Validators.required,
+          Validators.pattern(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/)
+        ]);
+        break;
+      case 'Driving License':
+        idProofNumberControl.setValidators([
+          Validators.required,
+          Validators.pattern(/^[A-Z]{2}\d{13}$/)
+        ]);
+        break;
+      default:
+        idProofNumberControl.clearValidators();
+        break;
+    }
+
+    idProofNumberControl.updateValueAndValidity();
   }
 }
