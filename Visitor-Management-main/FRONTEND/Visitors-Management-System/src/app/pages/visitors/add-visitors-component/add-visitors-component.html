@@ -52,15 +52,31 @@
       </label>
 
       <label>
-        <div class="inline">Upload Photo<i style="color: red">*</i></div>
-        <input
-          type="file"
-          accept="image/*"
-          (change)="onPhotoSelected($event)"
-          capture="environment"
-        />
-        <div class="error" *ngIf="photoError">{{ photoError }}</div>
-      </label>
+  <div class="inline">Visitor Photo <i style="color:red">*</i></div>
+
+  <div *ngIf="!webcamImage" class="webcam-section">
+    <webcam
+      *ngIf="showWebcam"
+      [trigger]="triggerObservable"
+      (imageCapture)="handleImage($event)"
+      (initError)="handleInitError($event)">
+    </webcam>
+    <div class="camera-buttons">
+      <button type="button" (click)="captureImage()">📸 Capture Photo</button>
+    </div>
+  </div>
+
+  <div *ngIf="webcamImage" class="preview-section">
+    <label>Preview Captured Image:</label>
+    <img [src]="webcamImage.imageAsDataUrl" width="200" />
+    <div class="preview-buttons">
+      <button type="button" (click)="clearImage()">🔁 Retake</button>
+    </div>
+  </div>
+</label>
+
+
+
 
       <label
         ><div class="inline">Host Name<i style="color: red">*</i></div>
@@ -101,8 +117,7 @@
       </div>
 
 
-      <label
-        >ID Proof Number
+      <label>ID Proof Number
         <input type="text" formControlName="idProofNumber" />
         <div class="error"
         *ngIf="idProofNumber?.touched && idProofNumber?.errors?.['required']"

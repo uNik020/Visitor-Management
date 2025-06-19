@@ -9,12 +9,14 @@ import { AgGridModule } from 'ag-grid-angular';
 import { ModuleRegistry } from 'ag-grid-community';
 import { AllCommunityModule } from 'ag-grid-community';
 import { QRCodeComponent } from 'angularx-qrcode';
+import { WebcamImage, WebcamInitError, WebcamModule } from 'ngx-webcam';
+import { Observable, Subject } from 'rxjs';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 @Component({
   selector: 'app-visitor-list',
-  imports: [RouterModule, FormsModule, CommonModule, AgGridModule, QRCodeComponent],
+  imports: [RouterModule, FormsModule, CommonModule, AgGridModule, QRCodeComponent, WebcamModule],
   templateUrl: './visitor-list.html',
   styleUrl: './visitor-list.css',
 })
@@ -32,6 +34,33 @@ export class VisitorList {
   viewingVisitor: any = null;
 
   qrData: string = ''; // For QR code generation from add visitor form
+
+  showWebcam: boolean = true;
+webcamImage: WebcamImage | null = null;
+
+private trigger: Subject<void> = new Subject<void>();
+get triggerObservable(): Observable<void> {
+  return this.trigger.asObservable();
+}
+
+captureImage(): void {
+  this.trigger.next();
+}
+
+handleEditImage(webcamImage: WebcamImage): void {
+  this.editingVisitor.webcamImage = webcamImage;
+  this.editingVisitor.photoUrl = webcamImage.imageAsDataUrl; // Base64 for preview
+}
+
+clearEditImage(): void {
+  this.editingVisitor.webcamImage = null;
+  this.editingVisitor.photoUrl = null;
+}
+
+handleInitError(error: WebcamInitError): void {
+  console.warn("Webcam error:", error);
+}
+
 
     constructor(
     private cd: ChangeDetectorRef,
@@ -197,7 +226,17 @@ onView(visitor: any) {
 
   onEdit(visitor: any) {
     this.editingVisitor = { ...visitor };
-    console.log(this.editingVisitor);
+
+    // If only hostName is available, map it to hostId for the dropdown to preselect
+  const hostName = visitor.visits?.[0]?.hostName;
+  if (hostName && !visitor.visits?.[0]?.hostId) {
+    const matchedHost = this.hosts.find(h => h.fullName === hostName);
+    if (matchedHost) {
+      this.editingVisitor.visits[0].hostId = matchedHost.hostId;
+    }
+  }
+
+    console.log("kam pachhis",this.editingVisitor);
   }
 
   cancelEdit() {

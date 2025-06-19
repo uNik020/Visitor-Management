@@ -12,11 +12,16 @@ import Swal from 'sweetalert2';
 import { HostService } from '../../../services/Host/host.service';
 import { VisitorService } from '../../../services/Visitor/visitor.service';
 import { QRCodeComponent } from 'angularx-qrcode';
+import { ViewChild, ElementRef } from '@angular/core';
+import { WebcamImage, WebcamInitError, WebcamModule, WebcamUtil } from 'ngx-webcam';
+import { Subject, Observable } from 'rxjs';
+import { SupabaseUpload } from '../../../services/supabase/supabase-upload';
+
 
 @Component({
   selector: 'app-add-visitors-component',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterModule, CommonModule, QRCodeComponent],
+  imports: [ReactiveFormsModule, RouterModule, CommonModule, QRCodeComponent, WebcamModule],
   templateUrl: './add-visitors-component.html',
   styleUrl: './add-visitors-component.css',
 })
@@ -27,6 +32,15 @@ export class AddVisitorsComponent {
   passCode: string = '';
   qrCodeData: string = '';
   companionCount: number = 0;
+  webcamImage: WebcamImage | null = null;
+showWebcam = true;
+multipleWebcamsAvailable = false;
+deviceId: string | undefined;
+errors: WebcamInitError[] = [];
+
+private trigger: Subject<void> = new Subject<void>();
+
+
 
   // Getter methods for form controls
   get idProofType() {
@@ -43,7 +57,8 @@ get idProofNumber() {
     private fb: FormBuilder,
     private hostService: HostService,
     private cd: ChangeDetectorRef,
-    private router: Router
+    private router: Router,
+    private uploadService: SupabaseUpload
   ) {
     this.visitorForm = this.fb.group({
       fullName: ['', Validators.required],
@@ -73,6 +88,10 @@ get idProofNumber() {
     this.loadHosts();
     this.generatePassCode();
 
+     WebcamUtil.getAvailableVideoInputs().then((mediaDevices: MediaDeviceInfo[]) => {
+    this.multipleWebcamsAvailable = mediaDevices.length > 1;
+  });
+
     this.visitorForm
       .get('isPreRegistered')
       ?.valueChanges.subscribe((isChecked) => {
@@ -95,6 +114,8 @@ get idProofNumber() {
   get companionForms(): FormArray {
     return this.visitorForm.get('companions') as FormArray;
   }
+
+  
 
   generatePassCode() {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -156,44 +177,86 @@ get idProofNumber() {
     );
   }
 
+  // Observable to trigger image capture
+get triggerObservable(): Observable<void> {
+  return this.trigger.asObservable();
+}
+
+captureImage(): void {
+  this.trigger.next();
+}
+
+handleImage(webcamImage: WebcamImage): void {
+  this.webcamImage = webcamImage;
+  this.visitorForm.patchValue({ photoUrl: webcamImage.imageAsDataUrl }); // Save Base64 image
+}
+
+handleInitError(error: WebcamInitError): void {
+  this.errors.push(error);
+  console.warn('Webcam error:', error);
+}
+
+clearImage(): void {
+  this.webcamImage = null;
+  this.visitorForm.patchValue({ photoUrl: null });
+}
+
+
   onSubmit(): void {
-    if (this.visitorForm.valid) {
-      const formValue = this.visitorForm.value;
+  if (this.visitorForm.valid) {
+    const formValue = this.visitorForm.value;
 
-      // Handle optional expectedVisitDateTime
-      if (!formValue.isPreRegistered) {
-        formValue.expectedVisitDateTime = null;
-      }
+    // Handle optional expectedVisitDateTime
+    if (!formValue.isPreRegistered) {
+      formValue.expectedVisitDateTime = null;
+    }
 
-      // Ensure QR & PassCode are synced
-      formValue.passCode = this.passCode;
-      //formValue.qrCodeData = this.qrCodeData;
-      formValue.qrCodeData = JSON.stringify(formValue); // Store the entire form data as JSON string
+    // Ensure QR & PassCode are synced
+    formValue.passCode = this.passCode;
+    formValue.qrCodeData = JSON.stringify(formValue); // Store entire form data as JSON string
 
-      this.visitorService.addVisitor(formValue).subscribe({
-        next: () => {
-          Swal.fire(
-            'Success',
-            'Visitor with visit added successfully',
-            'success'
-          );
-          this.loadHosts();
-          this.visitorForm.reset();
-          this.router.navigate(['/admin/visitor-list'],{
-            state: { qrData: formValue.qrCodeData }// Pass the QR data to the visitor list
-          });
-        },
-        error: (err) => Swal.fire('Error', err.error, 'error'),
+    const base64Image = formValue.photoUrl;
+
+    // ✅ If image is captured, upload to Supabase first
+    if (base64Image) {
+      this.uploadService.uploadVisitorPhoto(base64Image).then((publicUrl) => {
+        formValue.photoUrl = publicUrl; // Replace base64 with URL
+
+        // Submit the full form to the backend
+        this.visitorService.addVisitor(formValue).subscribe({
+          next: () => {
+            Swal.fire('Success', 'Visitor with visit added successfully', 'success');
+            this.loadHosts();
+            this.visitorForm.reset();
+            this.router.navigate(['/admin/visitor-list'], {
+              state: { qrData: formValue.qrCodeData }
+            });
+          },
+          error: (err) => Swal.fire('Error', err.error, 'error'),
+        });
+      }).catch((err) => {
+        Swal.fire('Upload Error', 'Failed to upload image: ' + err.message, 'error');
       });
+
     } else {
-      this.visitorForm.markAllAsTouched();
+      // ❗ If no image was captured
       Swal.fire({
         icon: 'error',
-        title: 'Form Incomplete',
-        text: 'Please fill all required fields correctly.',
+        title: 'No Photo Captured',
+        text: 'Please capture a visitor photo before submitting.',
       });
     }
+
+  } else {
+    this.visitorForm.markAllAsTouched();
+    Swal.fire({
+      icon: 'error',
+      title: 'Form Incomplete',
+      text: 'Please fill all required fields correctly.',
+    });
   }
+}
+
 
     setIdProofValidators(type: string): void {
     const idProofNumberControl = this.visitorForm.get('idProofNumber');

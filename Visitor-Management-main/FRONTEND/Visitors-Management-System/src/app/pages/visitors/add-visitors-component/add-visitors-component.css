@@ -170,3 +170,10 @@ option {
   align-items:baseline;
   gap: 0.2rem;
 }
+
+.webcam-section {
+  margin-top: 20px;
+}
+.camera-buttons button {
+  margin-top: 10px;
+}

@@ -58,42 +58,7 @@
       [paginationPageSize]="10"
       [animateRows]="true"
     >
-      <!-- <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Email</th>
-          <th>Purpose</th>
-          <th>Host</th>
-          <th>Status</th>
-          <th>Checkin At</th>
-          <th>Checkout At</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        
-          <tr *ngFor="let visitor of filteredVisitors">
-          <td>{{ visitor.fullName }}</td>
-          <td>{{ visitor.email }}</td>
-          <td>{{ visitor.purpose }}</td>
-          <td>{{ visitor.visits[0].host.fullName }}</td>
-          <td>{{ visitor.visits[0].visitStatus }}</td>
-          <td>{{ visitor.visits[0].checkInTime | date:'short' }}</td>
-          <td>
-            {{ visitor.visits[0].checkOutTime ? (visitor.visits[0].checkOutTime
-            | date:'short') : 'Yet to checkout' }}
-          </td>
-
-          <td class="actions">
-            <button class="btn-edit" (click)="onEdit(visitor)">Edit</button>
-            <button class="btn-delete" (click)="onDelete(visitor.visitorId)">
-              Delete
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table> -->
+     
     </ag-grid-angular>
   </div>
 
@@ -124,12 +89,10 @@
 
         <label>
           Host:
-
           <select
             [(ngModel)]="editingVisitor.visits[0].hostId"
-            name="host"
-            required
-          >
+            name="hostId"
+            required>
             <option value="" selected disabled>Select Host</option>
             <option *ngFor="let host of hosts" [value]="host.hostId">
               {{ host.fullName }}
@@ -195,11 +158,14 @@
 
         <label>
           ID Proof Type:
-          <input
-            type="text"
-            [(ngModel)]="editingVisitor.idProofType"
-            name="idProofType"
-          />
+          <select 
+          [(ngModel)]="editingVisitor.idProofType"
+          name="idProofType">
+          <option value="" disabled selected>Select ID Proof Type</option>
+          <option value="Aadhar Card">Aadhar Card</option>
+          <option value="Pan Card">Pan Card</option>
+          <option value="Driving License">Driving License</option>
+        </select>
         </label>
 
         <label>
@@ -209,6 +175,25 @@
             [(ngModel)]="editingVisitor.idProofNumber"
             name="idProofNumber"
           />
+          <div class="error"
+        *ngIf="editingVisitor.idProofNumber?.touched && editingVisitor.idProofNumber?.errors?.['required']"
+        >
+        ID Proof Number is required.
+      </div>
+      <div class="error" *ngIf="editingVisitor.idProofNumber?.touched && editingVisitor.idProofNumber?.errors?.['pattern']">
+        <ng-container [ngSwitch]="editingVisitor.idProofType.value">
+          <span *ngSwitchCase="'Aadhar Card'"
+          >Enter a valid 12-digit Aadhar number.</span
+          >
+          <span *ngSwitchCase="'Pan Card'"
+          >Enter a valid PAN (e.g., ABCDE1234F).</span
+          >
+          <span *ngSwitchCase="'Driving License'"
+          >Enter a valid DL (e.g., MH0120190001234).</span
+          >
+          <span *ngSwitchDefault>Invalid format.</span>
+        </ng-container>
+      </div>
         </label>
 
         <label>
@@ -221,21 +206,36 @@
         </label>
 
         <label>
-          Photo URL:
-          <input
-            type="file"
-            [(ngModel)]="editingVisitor.photoUrl"
-            name="photoUrl"
-          />
-        </label>
+  <div class="inline">Visitor Photo <i style="color:red">*</i></div>
+
+  <div *ngIf="!editingVisitor.webcamImage" class="webcam-section">
+    <webcam
+      *ngIf="showWebcam"
+      [trigger]="triggerObservable"
+      (imageCapture)="handleEditImage($event)"
+      (initError)="handleInitError($event)">
+    </webcam>
+    <div class="camera-buttons">
+      <button type="button" (click)="captureImage()">📸 Capture Photo</button>
+    </div>
+  </div>
+
+  <div *ngIf="editingVisitor.webcamImage" class="preview-section">
+    <label>Preview Captured Image:</label>
+    <img [src]="editingVisitor.webcamImage.imageAsDataUrl" width="200" />
+    <div class="preview-buttons">
+      <button type="button" (click)="clearEditImage()">🔁 Retake</button>
+    </div>
+  </div>
+</label>
+
 
         <label>
           Pass Code:
           <input
             type="text"
             [(ngModel)]="editingVisitor.passCode"
-            name="passCode"
-          />
+            name="passCode"/>
         </label>
 
         <!-- <label>

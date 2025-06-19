@@ -303,3 +303,9 @@ td {
   border: none;
   cursor: pointer;
 }
+
+.error {
+  color: red;
+  font-size: 0.85rem;
+  margin-top: 0.3rem;
+}

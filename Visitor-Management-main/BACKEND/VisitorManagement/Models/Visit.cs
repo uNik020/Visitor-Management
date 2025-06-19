@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace VisitorManagement.Models;
@@ -14,10 +15,12 @@ public partial class Visit
 
     public string? VisitStatus { get; set; }           
 
-    public bool IsApproved { get; set; } = false;      // Optional for pre-approvals
+    public bool IsApproved { get; set; } = false; 
     public string? ApprovalComment { get; set; }
 
     public string? GatePassNumber { get; set; }        // Optional pass number
+
+    [Column(TypeName = "nvarchar(max)")]
     public string? QrCodeData { get; set; }            // Unique to this visit if needed
 
     // Navigation
