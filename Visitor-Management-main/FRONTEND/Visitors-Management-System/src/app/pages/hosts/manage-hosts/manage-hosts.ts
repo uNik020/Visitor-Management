@@ -7,11 +7,14 @@ import { DepartmentService } from '../../../services/Department/department.servi
 import { DesignationService } from '../../../services/Designation/designation.service'; // You must create this service if not already created
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { WebcamImage, WebcamInitError, WebcamModule, WebcamUtil } from 'ngx-webcam';
+import { Observable, Subject } from 'rxjs';
+import { SupabaseUpload } from '../../../services/supabase/supabase-upload';
 
 @Component({
   selector: 'app-manage-hosts',
   templateUrl: './manage-hosts.html',
-  imports: [RouterModule, FormsModule, CommonModule, ReactiveFormsModule],
+  imports: [RouterModule, FormsModule, CommonModule, ReactiveFormsModule, WebcamModule],
   styleUrls: ['./manage-hosts.css'],
 })
 export class ManageHosts implements OnInit {
@@ -22,12 +25,21 @@ export class ManageHosts implements OnInit {
   editingId: number | null = null;
   viewingHost: any = null;
 
-
+  //webcam properties
+  webcamImage: WebcamImage | null = null;
+  showWebcam = true;
+  multipleWebcamsAvailable = false;
+  deviceId: string | undefined;
+  errors: WebcamInitError[] = [];
+    
+  private trigger: Subject<void> = new Subject<void>();
+  
   constructor(
     private fb: FormBuilder,
     private cd: ChangeDetectorRef,
     private hostService: HostService,
     private departmentService: DepartmentService,
+    private uploadService: SupabaseUpload,
     private designationService: DesignationService
   ) {
     this.hostForm = this.fb.group({
@@ -45,10 +57,41 @@ export class ManageHosts implements OnInit {
     this.loadHosts();
     this.loadDepartments();
     this.loadDesignations();
+
+    WebcamUtil.getAvailableVideoInputs().then((mediaDevices: MediaDeviceInfo[]) => {
+    this.multipleWebcamsAvailable = mediaDevices.length > 1;
+    });
+  }
+
+  //webcam methods
+   // Observable to trigger image capture
+  get triggerObservable(): Observable<void> {
+    return this.trigger.asObservable();
+  }
+  
+  captureImage(): void {
+    this.trigger.next();
+  }
+  
+  handleImage(webcamImage: WebcamImage): void {
+    this.webcamImage = webcamImage;
+    this.hostForm.patchValue({ profilePictureUrl: webcamImage.imageAsDataUrl }); // Save Base64 image
+  }
+  
+  handleInitError(error: WebcamInitError): void {
+    this.errors.push(error);
+    console.warn('Webcam error:', error);
+  }
+  
+  clearImage(): void {
+    this.webcamImage = null;
+    this.hostForm.patchValue({ profilePictureUrl: null });
   }
 
   onViewHost(host: any): void {
   this.viewingHost = { ...host };
+
+  console.log('Viewing Host:', this.viewingHost);
 }
 
 closeViewModal(): void {
@@ -85,34 +128,51 @@ closeViewModal(): void {
     });
   }
 
-  onSubmit(): void {
-    if (this.hostForm.invalid) {
-      Swal.fire('Validation Failed', 'Please fill all required fields.', 'warning');
-      return;
-    }
-
-    const hostData = this.hostForm.value;
-
-    if (this.editingId !== null) {
-      this.hostService.updateHost(hostData, this.editingId).subscribe({
-        next: () => {
-          Swal.fire('Success', 'Host updated successfully', 'success');
-          this.loadHosts();
-          this.cancelEdit();
-        },
-        error: (err) => Swal.fire('Error', err.message, 'error'),
-      });
-    } else {
-      this.hostService.addHost(hostData).subscribe({
-        next: () => {
-          Swal.fire('Success', 'Host added successfully', 'success');
-          this.loadHosts();
-          this.hostForm.reset();
-        },
-        error: (err) => Swal.fire('Error', err.message, 'error'),
-      });
-    }
+onSubmit(): void {
+  if (this.hostForm.invalid) {
+    Swal.fire('Validation Failed', 'Please fill all required fields.', 'warning');
+    return;
   }
+
+  const hostData = this.hostForm.value;
+  const base64Image = hostData.profilePictureUrl; // ✅ Correct form control name
+
+  if (base64Image) {
+    this.uploadService.uploadHostPhoto(base64Image).then((publicUrl) => {
+      hostData.profilePictureUrl = publicUrl; // ✅ Upload to Supabase
+
+      if (this.editingId !== null) {
+        this.hostService.updateHost(hostData, this.editingId).subscribe({
+          next: () => {
+            Swal.fire('Success', 'Host updated successfully', 'success');
+            this.loadHosts();
+            this.cancelEdit();
+          },
+          error: (err) => Swal.fire('Error', err.message, 'error'),
+        });
+      } else {
+        this.hostService.addHost(hostData).subscribe({
+          next: () => {
+            Swal.fire('Success', 'Host added successfully', 'success');
+            this.loadHosts();
+            this.hostForm.reset();
+            this.webcamImage = null;
+          },
+          error: (err) => Swal.fire('Error', err.message, 'error'),
+        });
+      }
+    }).catch((err) => {
+      Swal.fire('Upload Error', 'Failed to upload host photo: ' + err.message, 'error');
+    });
+  } else {
+    Swal.fire({
+      icon: 'error',
+      title: 'No Photo Captured',
+      text: 'Please capture a host photo before submitting.',
+    });
+  }
+}
+
 
   editHost(host: any): void {
     this.editingId = host.hostId;

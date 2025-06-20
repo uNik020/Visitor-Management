@@ -36,7 +36,7 @@ export class VisitorList {
   qrData: string = ''; // For QR code generation from add visitor form
 
   showWebcam: boolean = true;
-webcamImage: WebcamImage | null = null;
+  webcamImage: WebcamImage | null = null;
 
 private trigger: Subject<void> = new Subject<void>();
 get triggerObservable(): Observable<void> {
@@ -82,6 +82,7 @@ handleInitError(error: WebcamInitError): void {
 
 onView(visitor: any) {
   this.viewingVisitor = { ...visitor };
+  console.log("Viewing visitor data:", this.viewingVisitor);
 
   const qrPayload = {
     fullName: visitor.fullName,
@@ -93,6 +94,7 @@ onView(visitor: any) {
     comment: visitor.comment,
     idProofType: visitor.idProofType,
     idProofNumber: visitor.idProofNumber,
+    photoUrl: visitor.photoUrl,
     licensePlateNumber: visitor.licensePlateNumber,
     passCode: visitor.passCode,
     isPreRegistered: visitor.isPreRegistered,
@@ -111,7 +113,16 @@ onView(visitor: any) {
     this.viewingVisitor = null;
   }
 
+  // Fallback image for visitor photo
+  onImageError(event: any) {
+  event.target.src = 'assets/default-photo.jpg'; // fallback image
+}
+
+
   columnDefs = [
+    { headerName: 'Photo', field: 'photoUrl', cellRenderer: (params: any) => {
+      return `<img src="${params.value || 'assets/default-photo.jpg'}" alt="Visitor Photo" style="width: 35px; height: 35px; border-radius: 50%;">`;
+    }},
     { headerName: 'Name', field: 'fullName' },
     { headerName: 'Email', field: 'email' },
     { headerName: 'Purpose', field: 'purpose' },

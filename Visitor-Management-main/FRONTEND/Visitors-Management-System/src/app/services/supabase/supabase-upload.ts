@@ -23,6 +23,24 @@ async uploadVisitorPhoto(base64Image: string): Promise<string> {
 
     return publicUrlData?.publicUrl || '';
   }
+async uploadHostPhoto(base64Image: string): Promise<string> {
+    const fileName = `host_${Date.now()}.png`;
+    const { data, error } = await supabase.storage
+      .from('host-photos')
+      .upload(fileName, this.dataURLtoBlob(base64Image), {
+        contentType: 'image/png',
+        upsert: false
+      });
+
+    if (error) throw error;
+
+    const { data: publicUrlData } = supabase
+      .storage
+      .from('host-photos')
+      .getPublicUrl(fileName);
+
+    return publicUrlData?.publicUrl || '';
+  }
 
   private dataURLtoBlob(dataURL: string): Blob {
     const byteString = atob(dataURL.split(',')[1]);

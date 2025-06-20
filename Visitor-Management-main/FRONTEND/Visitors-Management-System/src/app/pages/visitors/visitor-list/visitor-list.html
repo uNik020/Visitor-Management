@@ -319,6 +319,17 @@
   <div class="view-modal" *ngIf="viewingVisitor">
     <div class="view-modal-content">
       <h3>Visitor Details</h3>
+
+      <div class="view-field" *ngIf="viewingVisitor.photoUrl">
+  <strong>Visitor Photo:</strong><br />
+  <img [src]="viewingVisitor.photoUrl || 'assets/default-photo.jpg'" 
+     (error)="onImageError($event)" 
+     alt="Visitor Photo" 
+     width="200" 
+     height="200"
+     style="border-radius: 50%; object-fit: cover;" />
+</div>
+
       <div class="view-field">
         <strong>Name:</strong> {{ viewingVisitor.fullName }}
       </div>
@@ -396,8 +407,7 @@
         <strong>Check-In:</strong> {{ viewingVisitor.visits[0].checkInTime |
         date:'short' }}<br />
         <strong>Check-Out:</strong> {{ viewingVisitor.visits[0].checkOutTime ?
-        (viewingVisitor.visits[0].checkOutTime | date:'short') : 'Yet to
-        checkout' }}
+        (viewingVisitor.visits[0].checkOutTime | date:'short') : 'Yet to checkout' }}
       </div>
 
       <div class="modal-actions">

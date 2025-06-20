@@ -88,9 +88,9 @@ get idProofNumber() {
     this.loadHosts();
     this.generatePassCode();
 
-     WebcamUtil.getAvailableVideoInputs().then((mediaDevices: MediaDeviceInfo[]) => {
+    WebcamUtil.getAvailableVideoInputs().then((mediaDevices: MediaDeviceInfo[]) => {
     this.multipleWebcamsAvailable = mediaDevices.length > 1;
-  });
+    });
 
     this.visitorForm
       .get('isPreRegistered')

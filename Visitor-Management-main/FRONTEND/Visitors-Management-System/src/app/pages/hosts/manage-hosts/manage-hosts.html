@@ -20,7 +20,27 @@
       </option>
     </select>
 
-    <input type="file" placeholder="Profile Picture URL" formControlName="profilePictureUrl" />
+    <div *ngIf="!webcamImage" class="webcam-section">
+    <webcam
+      *ngIf="showWebcam"
+      [trigger]="triggerObservable"
+      (imageCapture)="handleImage($event)"
+      (initError)="handleInitError($event)">
+    </webcam>
+    <div class="camera-buttons">
+      <button type="button" (click)="captureImage()">📸 Capture Photo</button>
+    </div>
+  </div>
+
+  <div *ngIf="webcamImage" class="preview-section">
+    <label>Preview Captured Image:</label>
+    <img [src]="webcamImage.imageAsDataUrl" width="200px" />
+    <div class="preview-buttons">
+      <button type="button" (click)="clearImage()">🔁 Retake</button>
+    </div>
+  </div>
+
+
     <input type="text" placeholder="About" formControlName="about" />
 
     <div class="actions">
@@ -37,6 +57,7 @@
     <thead>
       <tr>
         <th>Sr. No.</th>
+        <th>Photo</th>
         <th>Full Name</th>
         <th>Email</th>
         <th>Contact</th>
@@ -48,6 +69,7 @@
     <tbody>
       <tr *ngFor="let host of hosts; let i = index">
         <td>{{ i + 1 }}</td>
+        <td><img [src]="host.profilePictureUrl" alt="Host Image" style="width: 50px; height: 50px; border-radius: 50%;"/></td>
         <td>{{ host.fullName }}</td>
         <td>{{ host.email }}</td>
         <td>{{ host.phoneNumber }}</td>
@@ -75,7 +97,9 @@
     <div class="view-field"><strong>About:</strong> {{ viewingHost.about || 'N/A' }}</div>
     <div class="view-field" *ngIf="viewingHost.profilePictureUrl">
       <strong>Profile Picture:</strong><br />
-      <img [src]="viewingHost.profilePictureUrl" alt="Profile" class="profile-pic" />
+      <img [src]="viewingHost.profilePictureUrl || 'assets/default-photo.jpg'"  alt="Profile" class="profile-pic"  width="150" 
+     height="150"
+     style="border-radius: 50%; object-fit: cover;" />
     </div>
 
     <div class="modal-actions">
