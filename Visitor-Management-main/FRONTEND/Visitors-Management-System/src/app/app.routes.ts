@@ -10,7 +10,7 @@ import { ManageDepartments } from './pages/manage-departments/manage-departments
 import { RouteGuardService } from './services/RouteGuard/route-guard-service';
 import { ForgotPassword } from './pages/forgot-password/forgot-password/forgot-password';
 import { ManageDesignations } from './pages/manage-designations/manage-designations';
-import { ManageAppointments } from './pages/manage-appointments/manage-appointments/manage-appointments';
+import { ManageAppointments } from './pages/appointments/manage-appointments/manage-appointments';
 
 export const routes: Routes = [
   { path: '', component: Login },

@@ -1,1 +1,44 @@
-<p>manage-appointments works!</p>
+<div class="form-container">
+  <h2>Book Appointment</h2>
+
+  <!-- Select Existing Visitor -->
+  <label>
+    Select Visitor
+    <select formControlName="visitorId" [formGroup]="appointmentForm">
+      <option value="" disabled selected>Select existing visitor</option>
+      <option *ngFor="let visitor of visitors" [value]="visitor.visitorId">{{ visitor.fullName }}</option>
+    </select>
+  </label>
+  <button (click)="toggleAddVisitor()">➕ Add New Visitor</button>
+
+  <!-- Inline New Visitor Form -->
+  <div *ngIf="showAddVisitorForm" class="visitor-form">
+    <h3>New Visitor Details</h3>
+    <form [formGroup]="visitorForm" (ngSubmit)="submitVisitor()">
+      <label>Full Name<input formControlName="fullName" type="text"></label>
+      <label>Email<input formControlName="email" type="email"></label>
+      <label>Phone Number<input formControlName="phoneNumber" type="text"></label>
+      <label>Address<textarea formControlName="address"></textarea></label>
+      <button type="submit">Save Visitor</button>
+    </form>
+  </div>
+
+  <form [formGroup]="appointmentForm" (ngSubmit)="submitAppointment()">
+    <label>Host
+      <select formControlName="hostId">
+        <option value="" disabled selected>Select Host</option>
+        <option *ngFor="let host of hosts" [value]="host.hostId">{{ host.fullName }}</option>
+      </select>
+    </label>
+
+    <label>Date & Time
+      <input type="datetime-local" formControlName="scheduledVisitDateTime">
+    </label>
+
+    <label>Purpose
+      <input type="text" formControlName="visitPurpose">
+    </label>
+
+    <button type="submit" [disabled]="appointmentForm.invalid">Create Appointment</button>
+  </form>
+</div>
