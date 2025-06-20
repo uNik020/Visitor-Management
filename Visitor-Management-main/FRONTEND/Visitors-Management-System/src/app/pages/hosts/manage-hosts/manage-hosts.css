@@ -165,3 +165,26 @@ button.view {
 button.view:hover {
   background-color: #1f1f20;
 }
+
+.webcam-section {
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
+}
+.webcam-section button {
+  margin-top: 0.2rem;
+  width: 100%;
+  padding: 1rem;
+  background-color: #000;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.webcam-section button:hover:enabled {
+  background-color: #222;
+  transform: scale(1.03);
+}

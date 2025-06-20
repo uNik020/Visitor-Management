@@ -13,7 +13,10 @@ public partial class Visit
     public DateTime? CheckInTime { get; set; }
     public DateTime? CheckOutTime { get; set; }
 
-    public string? VisitStatus { get; set; }           
+    public string? VisitStatus { get; set; }
+    public DateTime? ScheduledVisitDateTime { get; set; }  // Official scheduled time
+    public string? VisitPurpose { get; set; }              // Optional appointment purpose
+
 
     public bool IsApproved { get; set; } = false; 
     public string? ApprovalComment { get; set; }
@@ -21,7 +24,7 @@ public partial class Visit
     public string? GatePassNumber { get; set; }        // Optional pass number
 
     [Column(TypeName = "nvarchar(max)")]
-    public string? QrCodeData { get; set; }            // Unique to this visit if needed
+    public string? QrCodeData { get; set; }            // Unique to this visit if 
 
     // Navigation
     [JsonIgnore]

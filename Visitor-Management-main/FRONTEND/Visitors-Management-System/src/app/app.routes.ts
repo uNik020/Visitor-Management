@@ -10,6 +10,7 @@ import { ManageDepartments } from './pages/manage-departments/manage-departments
 import { RouteGuardService } from './services/RouteGuard/route-guard-service';
 import { ForgotPassword } from './pages/forgot-password/forgot-password/forgot-password';
 import { ManageDesignations } from './pages/manage-designations/manage-designations';
+import { ManageAppointments } from './pages/manage-appointments/manage-appointments/manage-appointments';
 
 export const routes: Routes = [
   { path: '', component: Login },
@@ -27,7 +28,8 @@ export const routes: Routes = [
       { path: 'visitor-list', component: VisitorList ,canActivate:[RouteGuardService] },
       { path: 'manage-hosts', component: ManageHosts ,canActivate:[RouteGuardService]},
       { path: 'manage-departments', component: ManageDepartments ,canActivate:[RouteGuardService]},
-      { path: 'manage-designations', component: ManageDesignations ,canActivate:[RouteGuardService]}
+      { path: 'manage-designations', component: ManageDesignations ,canActivate:[RouteGuardService]},
+      { path: 'manage-appointments', component: ManageAppointments ,canActivate:[RouteGuardService]}
     ]
   },
   { path: '**', redirectTo: 'login' }
