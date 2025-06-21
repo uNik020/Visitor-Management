@@ -1,44 +1,142 @@
 <div class="form-container">
   <h2>Book Appointment</h2>
 
-  <!-- Select Existing Visitor -->
-  <label>
-    Select Visitor
-    <select formControlName="visitorId" [formGroup]="appointmentForm">
-      <option value="" disabled selected>Select existing visitor</option>
-      <option *ngFor="let visitor of visitors" [value]="visitor.visitorId">{{ visitor.fullName }}</option>
-    </select>
-  </label>
-  <button (click)="toggleAddVisitor()">➕ Add New Visitor</button>
+  <form [formGroup]="visitorForm" (ngSubmit)="submitAppointment()">
+    <div class="form-grid">
+      <!-- Full Name -->
+      <label>
+        <div class="inline">Full Name <i style="color:red">*</i></div>
+        <input type="text" formControlName="fullName" />
+        <div class="error" *ngIf="visitorForm.get('fullName')?.touched && visitorForm.get('fullName')?.invalid">
+          Full Name is required.
+        </div>
+      </label>
 
-  <!-- Inline New Visitor Form -->
-  <div *ngIf="showAddVisitorForm" class="visitor-form">
-    <h3>New Visitor Details</h3>
-    <form [formGroup]="visitorForm" (ngSubmit)="submitVisitor()">
-      <label>Full Name<input formControlName="fullName" type="text"></label>
-      <label>Email<input formControlName="email" type="email"></label>
-      <label>Phone Number<input formControlName="phoneNumber" type="text"></label>
-      <label>Address<textarea formControlName="address"></textarea></label>
-      <button type="submit">Save Visitor</button>
-    </form>
-  </div>
+      <!-- Email -->
+      <label>
+        <div class="inline">Email <i style="color:red">*</i></div>
+        <input type="email" formControlName="email" />
+        <div class="error" *ngIf="visitorForm.get('email')?.touched && visitorForm.get('email')?.invalid">
+          Valid email is required.
+        </div>
+      </label>
 
-  <form [formGroup]="appointmentForm" (ngSubmit)="submitAppointment()">
-    <label>Host
-      <select formControlName="hostId">
-        <option value="" disabled selected>Select Host</option>
-        <option *ngFor="let host of hosts" [value]="host.hostId">{{ host.fullName }}</option>
-      </select>
-    </label>
+      <!-- Phone Number -->
+      <label>
+        <div class="inline">Phone Number <i style="color:red">*</i></div>
+        <input type="text" formControlName="phoneNumber" />
+        <div class="error" *ngIf="visitorForm.get('phoneNumber')?.touched && visitorForm.get('phoneNumber')?.invalid">
+          Enter a valid 10-digit phone number.
+        </div>
+      </label>
 
-    <label>Date & Time
-      <input type="datetime-local" formControlName="scheduledVisitDateTime">
-    </label>
+      <!-- Address -->
+      <label>
+        <div class="inline">Address <i>(Optional)</i></div>
+        <textarea formControlName="address"></textarea>
+      </label>
 
-    <label>Purpose
-      <input type="text" formControlName="visitPurpose">
-    </label>
+      <!-- Company Name -->
+      <label>
+        <div class="inline">Company Name <i style="color:red">*</i></div>
+        <input type="text" formControlName="companyName" />
+      </label>
 
-    <button type="submit" [disabled]="appointmentForm.invalid">Create Appointment</button>
+      <!-- Visit Purpose -->
+      <label>
+        <div class="inline">Visit Purpose <i style="color:red">*</i></div>
+        <input type="text" formControlName="purpose" />
+        <div class="error" *ngIf="visitorForm.get('purpose')?.touched && visitorForm.get('purpose')?.invalid">
+          Visit purpose is required.
+        </div>
+      </label>
+
+      <!-- Host -->
+      <label>
+        <div class="inline">Host Name <i style="color:red">*</i></div>
+        <select formControlName="hostId">
+          <option value="" disabled>Select Host</option>
+          <option *ngFor="let host of hosts" [value]="host.hostId">{{ host.fullName }}</option>
+        </select>
+        <div class="error" *ngIf="visitorForm.get('hostId')?.touched && visitorForm.get('hostId')?.invalid">
+          Host is required.
+        </div>
+      </label>
+
+      <!-- Expected Visit DateTime -->
+      <label>
+        <div class="inline">Expected Visit Date & Time <i style="color:red">*</i></div>
+        <input type="datetime-local" formControlName="expectedVisitDateTime" />
+        <div class="error" *ngIf="visitorForm.get('expectedVisitDateTime')?.touched && visitorForm.get('expectedVisitDateTime')?.invalid">
+          Expected visit date/time is required.
+        </div>
+      </label>
+
+      <!-- ID Proof Type -->
+      <label>
+        <div class="inline">ID Proof Type <i style="color:red">*</i></div>
+        <select formControlName="idProofType" (change)="setIdProofValidators(visitorForm.get('idProofType')?.value)">
+          <option value="" disabled selected>Select ID Proof Type</option>
+          <option value="AadharCard">Aadhar Card</option>
+          <option value="PanCard">Pan Card</option>
+          <option value="DrivingLicense">Driving License</option>
+        </select>
+        <div class="error" *ngIf="visitorForm.get('idProofType')?.touched && visitorForm.get('idProofType')?.invalid">
+          ID Proof Type is required.
+        </div>
+      </label>
+
+      <!-- ID Proof Number -->
+      <label>
+        <div class="inline">ID Proof Number <i style="color:red">*</i></div>
+        <input type="text" formControlName="idProofNumber" />
+        <div class="error" *ngIf="idProofNumber?.touched && idProofNumber?.errors?.['required']">
+          ID Proof Number is required.
+        </div>
+        <div class="error" *ngIf="idProofNumber?.touched && idProofNumber?.errors?.['pattern']">
+          <ng-container [ngSwitch]="idProofType?.value">
+            <span *ngSwitchCase="'AadharCard'">Enter a valid 12-digit Aadhar number.</span>
+            <span *ngSwitchCase="'PanCard'">Enter a valid PAN (e.g., ABCDE1234F).</span>
+            <span *ngSwitchCase="'DrivingLicense'">Enter a valid DL (e.g., MH0120190001234).</span>
+            <span *ngSwitchDefault>Invalid format.</span>
+          </ng-container>
+        </div>
+      </label>
+
+      <!-- License Plate Number -->
+      <label>
+        <div class="inline">Vehicle Plate No. <i style="color:red">*</i></div>
+        <input type="text" formControlName="licensePlateNumber" />
+      </label>
+
+      <!-- Comment -->
+      <label>
+        <div class="inline">Comment <i style="color:red">*</i></div>
+        <textarea formControlName="comment"></textarea>
+      </label>
+
+      <!-- Webcam Section -->
+      <label>
+        <div class="inline">Visitor Photo <i style="color:red">*</i></div>
+        <div *ngIf="!webcamImage" class="webcam-section">
+          <webcam *ngIf="showWebcam" [trigger]="triggerObservable" (imageCapture)="handleImage($event)" (initError)="handleInitError($event)"></webcam>
+          <div class="camera-buttons">
+            <button type="button" (click)="captureImage()">📸 Capture</button>
+          </div>
+        </div>
+        <div *ngIf="webcamImage" class="preview-section">
+          <label>Preview Captured Image:</label>
+          <img [src]="webcamImage.imageAsDataUrl" width="200" />
+          <div class="preview-buttons">
+            <button type="button" (click)="clearImage()">🔁 Retake</button>
+          </div>
+        </div>
+      </label>
+
+      <!-- Submit Button -->
+      <div class="submit-section">
+        <button type="submit" [disabled]="visitorForm.invalid">Submit Appointment</button>
+      </div>
+    </div>
   </form>
 </div>

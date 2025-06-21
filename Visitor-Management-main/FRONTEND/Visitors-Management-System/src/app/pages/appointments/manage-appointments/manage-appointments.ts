@@ -1,96 +1,143 @@
+// manage-appointments.ts (Updated)
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AppointmentService } from '../../../services/Appointment/appointment-service';
+import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { VisitorService } from '../../../services/Visitor/visitor.service';
 import { HostService } from '../../../services/Host/host.service';
 import Swal from 'sweetalert2';
-import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { WebcamImage, WebcamInitError, WebcamModule, WebcamUtil } from 'ngx-webcam';
+import { Observable, Subject } from 'rxjs';
+import { SupabaseUpload } from '../../../services/supabase/supabase-upload';
 
 @Component({
   selector: 'app-manage-appointments',
-  imports: [FormsModule, ReactiveFormsModule, CommonModule],
+  standalone: true,
+  imports: [FormsModule, ReactiveFormsModule, CommonModule, WebcamModule],
   templateUrl: './manage-appointments.html',
   styleUrl: './manage-appointments.css'
 })
 export class ManageAppointments implements OnInit {
-  appointmentForm: FormGroup;
   visitorForm: FormGroup;
-  visitors: any[] = [];
   hosts: any[] = [];
-  showAddVisitorForm = false;
-  selectedVisitorId: number | null = null;
+  webcamImage: WebcamImage | null = null;
+  showWebcam = true;
+  trigger: Subject<void> = new Subject<void>();
 
   constructor(
     private fb: FormBuilder,
-    private appointmentService: AppointmentService,
     private visitorService: VisitorService,
-    private hostService: HostService
+    private hostService: HostService,
+    private uploadService: SupabaseUpload
   ) {
-    this.appointmentForm = this.fb.group({
-      visitorId: ['', Validators.required],
-      hostId: ['', Validators.required],
-      scheduledVisitDateTime: ['', Validators.required],
-      visitPurpose: ['', Validators.required],
-    });
-
     this.visitorForm = this.fb.group({
       fullName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       phoneNumber: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
-      address: ['']
+      address: [''],
+      companyName: ['', Validators.required],
+      purpose: ['', Validators.required],
+      hostId: ['', Validators.required],
+      expectedVisitDateTime: ['', Validators.required],
+      idProofType: ['', Validators.required],
+      idProofNumber: ['', Validators.required],
+      comment: ['', Validators.required],
+      licensePlateNumber: ['', Validators.required],
+      photoUrl: [null, Validators.required],
+      isPreRegistered: [true] // Pre-registered by default for appointments
     });
   }
 
   ngOnInit(): void {
-    this.loadVisitors();
     this.loadHosts();
+    WebcamUtil.getAvailableVideoInputs().then(devices => {
+      this.showWebcam = devices.length > 0;
+    });
   }
 
-  loadVisitors() {
-    this.visitorService.getVisitor().subscribe(
-      (data) => this.visitors = data,
-      (error) => console.error('Error loading visitors:', error)
-    );
+  get triggerObservable(): Observable<void> {
+    return this.trigger.asObservable();
   }
 
-  loadHosts() {
+  captureImage(): void {
+    this.trigger.next();
+  }
+
+  handleImage(webcamImage: WebcamImage): void {
+    this.webcamImage = webcamImage;
+    this.visitorForm.patchValue({ photoUrl: webcamImage.imageAsDataUrl });
+  }
+
+  clearImage(): void {
+    this.webcamImage = null;
+    this.visitorForm.patchValue({ photoUrl: null });
+  }
+
+  handleInitError(error: WebcamInitError): void {
+    console.error('Webcam init error:', error);
+  }
+
+  loadHosts(): void {
     this.hostService.getHosts().subscribe(
-      (data) => this.hosts = data,
-      (error) => console.error('Error loading hosts:', error)
+      data => this.hosts = data,
+      error => console.error('Error loading hosts:', error)
     );
   }
 
-  toggleAddVisitor() {
-    this.showAddVisitorForm = !this.showAddVisitorForm;
-  }
-
-  submitVisitor() {
-    if (this.visitorForm.valid) {
-      this.visitorService.addVisitor(this.visitorForm.value).subscribe({
-        next: (response) => {
-          Swal.fire('Success', 'Visitor added successfully.', 'success');
-          this.loadVisitors();
-          this.showAddVisitorForm = false;
-        },
-        error: (err) => Swal.fire('Error', err.error, 'error')
-      });
-    } else {
-      Swal.fire('Form Error', 'Please fill all required visitor details correctly.', 'warning');
+  setIdProofValidators(type: string): void {
+    const control = this.visitorForm.get('idProofNumber');
+    if (!control) return;
+    switch (type) {
+      case 'AadharCard':
+        control.setValidators([Validators.required, Validators.pattern(/^\d{12}$/)]);
+        break;
+      case 'PanCard':
+        control.setValidators([Validators.required, Validators.pattern(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/)]);
+        break;
+      case 'DrivingLicense':
+        control.setValidators([Validators.required, Validators.pattern(/^[A-Z]{2}\d{13}$/)]);
+        break;
+      default:
+        control.clearValidators();
+        break;
     }
+    control.updateValueAndValidity();
   }
 
-  submitAppointment() {
-    if (this.appointmentForm.valid) {
-      this.appointmentService.createAppointment(this.appointmentForm.value).subscribe({
+  submitAppointment(): void {
+    if (this.visitorForm.invalid) {
+      this.visitorForm.markAllAsTouched();
+      Swal.fire('Form Error', 'Please complete all required fields.', 'warning');
+      return;
+    }
+
+    const formData = this.visitorForm.value;
+    const base64Image = formData.photoUrl;
+
+    if (!base64Image) {
+      Swal.fire('Photo Missing', 'Please capture visitor photo before submitting.', 'error');
+      return;
+    }
+
+    this.uploadService.uploadVisitorPhoto(base64Image).then(publicUrl => {
+      formData.photoUrl = publicUrl;
+      this.visitorService.addVisitor(formData).subscribe({
         next: () => {
-          Swal.fire('Success', 'Appointment created successfully!', 'success');
-          this.appointmentForm.reset();
+          Swal.fire('Success', 'Appointment submitted successfully.', 'success');
+          this.visitorForm.reset({ isPreRegistered: true });
+          this.webcamImage = null;
         },
-        error: (err) => Swal.fire('Error', err.error, 'error')
+        error: err => Swal.fire('Error', err.error || 'Something went wrong.', 'error')
       });
-    } else {
-      Swal.fire('Error', 'Please complete all required appointment fields.', 'error');
-    }
+    }).catch(err => {
+      Swal.fire('Upload Error', 'Image upload failed: ' + err.message, 'error');
+    });
+  }
+
+  get idProofType() {
+    return this.visitorForm.get('idProofType');
+  }
+
+  get idProofNumber() {
+    return this.visitorForm.get('idProofNumber');
   }
 }
